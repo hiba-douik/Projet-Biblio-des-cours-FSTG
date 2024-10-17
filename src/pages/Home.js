@@ -35,7 +35,7 @@ function Home() {
           </div>
         </div>
       </div>
-      <div className="slick-custom">
+      {/* <div className="slick-custom">
         <img
           src="template_user/images/slideshow/team-meeting-renewable-energy-project.jpeg"
           className="img-fluid"
@@ -79,7 +79,7 @@ function Home() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </section>
     <section className="about section-padding">
       <div className="container">

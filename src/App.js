@@ -9,12 +9,19 @@ import NotFound from './pages/NotFound';
 import Register from './pages/Register';
 import Login from './components/Users/auth/Login';
 
+import Dashboard from './components/Admin/pages/Dashboard';
+import LoginAdmin from './components/Admin/auth/LoginAdmin';
+
 
 function App() {
   return (
     <Router>
       <Routes>
       <Route path="/" element={<Home/>}/>
+
+      <Route path="/loginadmin" element={<LoginAdmin/>}/>
+
+      <Route path="/dash" element={<Dashboard/>}/>
       <Route path="/about" element={<About/>}/>
       <Route path="/faq" element={<FAQs/>}/>
       <Route path="/contact" element={<Contcat/>}/>
