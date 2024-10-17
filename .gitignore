@@ -1,6 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-/public/template_admin
-/public/template_user
+/public/template_admin/
+/public/template_user/
 
 # dependencies
 /node_modules
