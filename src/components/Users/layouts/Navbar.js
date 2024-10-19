@@ -21,7 +21,9 @@ function Navbar() {
       
       <Link className="navbar-brand" to={Home}  >
         <strong>
-          <span>Little</span> Fashion
+          {/* <span>Little</span> Fashion */}
+          <img style={{ maxWidth : 130}} src="logo.png" className="img-fluid" alt="" />
+
         </strong>
       </Link>
       <div className="d-lg-none">
