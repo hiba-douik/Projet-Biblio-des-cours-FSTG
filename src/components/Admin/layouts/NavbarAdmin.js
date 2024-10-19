@@ -22,10 +22,10 @@ function Navbar() {
             className="breadcrumb-item text-sm text-dark active"
             aria-current="page"
           >
-            Dashboard
+            Tables
           </li>
         </ol>
-        <h6 className="font-weight-bolder mb-0">Dashboard</h6>
+        <h6 className="font-weight-bolder mb-0">Tables</h6>
       </nav>
       <div
         className="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4"
@@ -92,21 +92,18 @@ function Navbar() {
               aria-labelledby="dropdownMenuButton"
             >
               <li className="mb-2">
-                <a
-                  className="dropdown-item border-radius-md"
-                  href="javascript:;"
-                >
+                <a className="dropdown-item border-radius-md" href="javascript:;">
                   <div className="d-flex py-1">
                     <div className="my-auto">
                       <img
-                        src="template_admin/./assets/img/team-2.jpg"
+                        src="../assets/img/team-2.jpg"
                         className="avatar avatar-sm  me-3 "
                       />
                     </div>
                     <div className="d-flex flex-column justify-content-center">
                       <h6 className="text-sm font-weight-normal mb-1">
-                        <span className="font-weight-bold">New message</span>{" "}
-                        from Laur
+                        <span className="font-weight-bold">New message</span> from
+                        Laur
                       </h6>
                       <p className="text-xs text-secondary mb-0">
                         <i className="fa fa-clock me-1" />
@@ -117,14 +114,11 @@ function Navbar() {
                 </a>
               </li>
               <li className="mb-2">
-                <a
-                  className="dropdown-item border-radius-md"
-                  href="javascript:;"
-                >
+                <a className="dropdown-item border-radius-md" href="javascript:;">
                   <div className="d-flex py-1">
                     <div className="my-auto">
                       <img
-                        src="template_admin/./assets/img/small-logos/logo-spotify.svg"
+                        src="../assets/img/small-logos/logo-spotify.svg"
                         className="avatar avatar-sm bg-gradient-dark  me-3 "
                       />
                     </div>
@@ -141,10 +135,7 @@ function Navbar() {
                 </a>
               </li>
               <li>
-                <a
-                  className="dropdown-item border-radius-md"
-                  href="javascript:;"
-                >
+                <a className="dropdown-item border-radius-md" href="javascript:;">
                   <div className="d-flex py-1">
                     <div className="avatar avatar-sm bg-gradient-secondary  me-3  my-auto">
                       <svg
@@ -199,7 +190,7 @@ function Navbar() {
           </li>
           <li className="nav-item d-flex align-items-center">
             <a
-              href="template_admin/./pages/sign-in.html"
+              href="../pages/sign-in.html"
               className="nav-link text-body font-weight-bold px-0"
             >
               <i className="fa fa-user me-sm-1" />
@@ -210,6 +201,7 @@ function Navbar() {
       </div>
     </div>
   </nav>
+  
 
   )
 }
