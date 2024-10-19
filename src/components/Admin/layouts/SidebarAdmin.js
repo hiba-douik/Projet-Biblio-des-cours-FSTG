@@ -70,15 +70,15 @@ function SidebarAdmin() {
         </li>
       
         <li className="nav-item">
-          <a
+          <Link
             className="nav-link text-white "
-            href="template_admin/./pages/virtual-reality.html"
+             to="/documentList"
           >
             <div className="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i className="material-icons opacity-10">view_in_ar</i>
             </div>
-            <span className="nav-link-text ms-1">Virtual Reality</span>
-          </a>
+            <span className="nav-link-text ms-1">documents </span>
+          </Link>
         </li>
        
         <li className="nav-item mt-3">

@@ -14,6 +14,15 @@ import LoginAdmin from './components/Admin/auth/LoginAdmin';
 import ListUsers from './components/Admin/users/ListUsers';
 import ListBibliotheque from './components/Admin/bibliotheque/ListBibliotheque';
 import CreateUsers from './components/Admin/users/CreateUser';
+import CreateBib from './components/Admin/Bibliotique/createBib';
+import UpdateBib from './components/Admin/Bibliotique/updateBib';
+import ListeBibliotheque from './components/Admin/Bibliotique/ListeBibliotique';
+
+import DocumentList from './components/Admin/document/DocumentList';
+import CreateDoc from './components/Users/document/CreateDoc';
+import UpdateDocumentForm from './components/Users/document/UpdateDoc';
+import DocList  from './components/Users/document/Document';
+
 
 
 function App() {
@@ -28,9 +37,17 @@ function App() {
       <Route path="/" element={<Home/>}/>
 
       <Route path="/loginadmin" element={<LoginAdmin/>}/>
-      <Route path="/bibliotheques" element={<ListBibliotheque/>}/>
+      {/* <Route path="/bibliotheques" element={<ListBibliotheque/>}/> */}
 
       <Route path="/dashboard" element={<Dashboard/>}/>
+      <Route path="/dash" element={<Dashboard/>}/>
+      <Route path="/bibliotheques" element={<ListeBibliotheque/>}/>
+      <Route path="/createBib" element={<CreateBib/>}/>
+      <Route path="/updateBib" element={<UpdateBib/>}/>
+      <Route path="/documentList" element={<DocumentList/>}/>
+      <Route path="/createdocuments" element={<CreateDoc/>}/>
+      <Route path="/updateDocuments" element={<UpdateDocumentForm/>}/>
+      <Route path="/documents" element={<DocList/>}/>
       <Route path="/about" element={<About/>}/>
       <Route path="/faq" element={<FAQs/>}/>
       <Route path="/contact" element={<Contcat/>}/>
@@ -45,3 +62,4 @@ function App() {
 }
 
 export default App;
+
