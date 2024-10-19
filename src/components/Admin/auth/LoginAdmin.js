@@ -59,7 +59,7 @@ function LoginAdmin() {
                     <h4 className="text-white font-weight-bolder text-center mt-2 mb-0">
                       Sign in
                     </h4>
-                    <div className="row mt-3">
+                    {/* <div className="row mt-3">
                       <div className="col-2 text-center ms-auto">
                         <a className="btn btn-link px-3" href="javascript:;">
                           <i className="fa fa-facebook text-white text-lg" />
@@ -75,7 +75,7 @@ function LoginAdmin() {
                           <i className="fa fa-google text-white text-lg" />
                         </a>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <div className="card-body">
@@ -110,15 +110,6 @@ function LoginAdmin() {
                         Sign in
                       </button>
                     </div>
-                    <p className="mt-4 text-sm text-center">
-                      Don't have an account?
-                      <a
-                        href="../pages/sign-up.html"
-                        className="text-primary text-gradient font-weight-bold"
-                      >
-                        Sign up
-                      </a>
-                    </p>
                   </form>
                 </div>
               </div>
