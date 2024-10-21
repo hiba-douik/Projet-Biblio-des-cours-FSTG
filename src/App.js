@@ -22,6 +22,7 @@ import DocumentList from './components/Admin/document/DocumentList';
 import CreateDoc from './components/Users/document/CreateDoc';
 import UpdateDocumentForm from './components/Users/document/UpdateDoc';
 import DocList  from './components/Users/document/Document';
+import EditUser from './components/Admin/users/EditUser';
 
 
 
@@ -31,7 +32,8 @@ function App() {
       <Routes>
       {/* user */}
       <Route path="/listusers" element={<ListUsers/>}/>
-      <Route path="/createuser" element={<CreateUsers/>}/>
+      <Route path="/create-user" element={<CreateUsers/>}/>
+      <Route path="/edit-user/:userId" element={<EditUser/>}/>
 
 
       <Route path="/" element={<Home/>}/>

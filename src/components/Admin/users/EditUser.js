@@ -4,30 +4,37 @@ import Footer from '../layouts/FooterAdmin';
 import SidebarAdmin from '../layouts/SidebarAdmin';
 
 function EditUser({ userId }) {
-  // State to store user input, including the image
   const [userData, setUserData] = useState({
     name: '',
     email: '',
     password: '', 
-    userType: 'Etudient', // Default to 'Student'
-    image: null,          // Add image to state
+    type: 'Etudient', // Default to 'Student'
+    image: null,          
   });
+  
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
+
+  const API_BASE_URL = 'http://localhost:9000';
 
   // Fetch user data when component mounts
-//   useEffect(() => {
-//     // Fetch the current user data from the backend (you should replace the URL)
-//     fetch(`https://your-api-url.com/users/${userId}`)
-//       .then((response) => response.json())
-//       .then((data) => {
-//         setUserData({
-//           name: data.name,
-//           email: data.email,
-//           userType: data.userType,
-//           image: null,  // We don't set the image here, but it can be handled if needed
-//         });
-//       })
-//       .catch((error) => console.error('Error fetching user data:', error));
-//   }, [userId]);
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/user/${userId}`)
+      .then((response) => {
+        if (!response.ok) throw new Error('Failed to fetch user data');
+        return response.json();
+      })
+      .then((data) => {
+        setUserData({
+          name: data.name,
+          email: data.email,
+          type: data.type,
+          image: null,
+        });
+      })
+
+      .catch((error) => console.error('Error fetching user data:', error));
+  }, [userId]);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -42,12 +49,12 @@ function EditUser({ userId }) {
   const handleImageChange = (e) => {
     setUserData({
       ...userData,
-      image: e.target.files[0], // Store the selected image file
+      image: e.target.files[0],
     });
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     
@@ -55,34 +62,49 @@ function EditUser({ userId }) {
     formData.append('name', userData.name);
     formData.append('email', userData.email);
     if (userData.password) {
-      formData.append('password', userData.password); // Only append password if changed
+      formData.append('password', userData.password);
     }
-    formData.append('userType', userData.userType);
+    formData.append('Type', userData.type);
     if (userData.image) {
-      formData.append('image', userData.image); // Append the image file if selected
+      formData.append('image', userData.image);
     }
 
-    console.log([...formData]);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/user/update/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('Token')}`, // Ensure you're sending the token if needed
+        },
+        body: formData,
+      });
 
-    // Send the formData to the backend (you should replace the URL)
-    /*
-    fetch(`https://your-api-url.com/users/${userId}`, {
-      method: 'PUT',  // Use PUT or PATCH to update
-      body: formData,
-    })
-    .then(response => response.json())
-    .then(data => console.log('User updated:', data))
-    .catch(error => console.error('Error:', error));
-    */
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update user');
+      }
+
+      const updatedUser = await response.json();
+      setSuccess('User updated successfully');
+      setError('');
+      console.log('Updated User:', updatedUser);
+    } catch (err) {
+      setError(err.message || 'Error updating user');
+      setSuccess('');
+      console.error('Error:', err);
+    }
   };
+
+  
 
   return (
     <>
       <SidebarAdmin />
-      <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+      <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
         <Navbar />
         <div className="container mt-5">
           <h2>Edit User</h2>
+          {success && <div className="alert alert-success">{success}</div>}
+          {error && <div className="alert alert-danger">{error}</div>}
           <form onSubmit={handleSubmit} encType="multipart/form-data">
             {/* Name input */}
             <div className="mb-3">
@@ -126,14 +148,14 @@ function EditUser({ userId }) {
               />
             </div>
 
-            {/* User Type selection (Etudient or Professor) */}
+            {/* User Type selection */}
             <div className="mb-3">
-              <label htmlFor="userType" className="form-label">User Type</label>
+              <label htmlFor="type" className="form-label">User Type</label>
               <select
                 className="form-select form-control bg-gray-400"
-                id="userType"
-                name="userType"
-                value={userData.userType}
+                id="type"
+                name="type"
+                value={userData.type}
                 onChange={handleChange}
                 required
               >

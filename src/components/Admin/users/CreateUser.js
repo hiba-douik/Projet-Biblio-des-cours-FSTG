@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import Navbar from '../layouts/NavbarAdmin';
-import Footer from '../layouts/FooterAdmin';
 import SidebarAdmin from '../layouts/SidebarAdmin';
 
 function CreateUsers() {
   // State to store user input, including the image
   const [userData, setUserData] = useState({
-    name: '',
+    nom: '',
     email: '',
     password: '',
-    userType: 'Etudient', // Default to 'Student'
+    type: 'Etudient', // Default to 'Etudient'
     image: null,          // Add image to state
   });
+
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
 
   // Handle input changes
   const handleChange = (e) => {
@@ -31,33 +33,52 @@ function CreateUsers() {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    
+  
     // Append all form data
-    formData.append('name', userData.name);
+    formData.append('nom', userData.nom);
     formData.append('email', userData.email);
     formData.append('password', userData.password);
-    formData.append('userType', userData.userType);
+    formData.append('type', userData.type);
     if (userData.image) {
       formData.append('image', userData.image); // Append the image file
     }
-
-    console.log([...formData]);
-
-    // You can send the formData to the backend or API here, for example using fetch or axios
-    /*
-    fetch('https://your-api-url.com/users', {
-      method: 'POST',
-      body: formData,
-    })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error('Error:', error));
-    */
-  };
   
+    const API_BASE_URL = 'http://localhost:9000';
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/user/create`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('Token')}`,
+        },
+        body: formData, // Use FormData instead of JSON
+      });
+  
+      // Check for response status
+      if (!response.ok) {
+        // Try to read the response as JSON, but handle cases where it isn't valid JSON
+        let errorMessage = 'Failed to create user';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || 'Failed to create user';
+        } catch (jsonError) {
+          // If JSON parsing fails, fall back to a generic message
+          console.error('Failed to parse error response:', jsonError);
+        }
+        throw new Error(errorMessage);
+      }
+  
+      setSuccess('User created successfully');
+      setError('');
+    } catch (err) {
+      setError(err.message || 'Error creating user');
+      setSuccess('');
+      console.error('Error:', err);
+    }
+  };
+
   return (
     <>
       <SidebarAdmin />
@@ -65,16 +86,18 @@ function CreateUsers() {
         <Navbar />
         <div className="container mt-5">
           <h2>Create User</h2>
+          {success && <div className="alert alert-success">{success}</div>}
+          {error && <div className="alert alert-danger">{error}</div>}
           <form onSubmit={handleSubmit} encType="multipart/form-data">
             {/* Name input */}
             <div className="mb-3">
-              <label htmlFor="name" className="form-label">Name</label>
+              <label htmlFor="nom" className="form-label">Nom</label>
               <input
                 type="text"
                 className="form-control form-control bg-gray-400"
-                id="name"
-                name="name"
-                value={userData.name}
+                id="nom"
+                name="nom"
+                value={userData.nom}
                 onChange={handleChange}
                 required
               />
@@ -110,12 +133,12 @@ function CreateUsers() {
 
             {/* User Type selection (Etudient or Professor) */}
             <div className="mb-3">
-              <label htmlFor="userType" className="form-label">User Type</label>
+              <label htmlFor="type" className="form-label">User Type</label>
               <select
                 className="form-select form-control bg-gray-400"
-                id="userType"
-                name="userType"
-                value={userData.userType}
+                id="type"
+                name="type"
+                value={userData.type}
                 onChange={handleChange}
                 required
               >
