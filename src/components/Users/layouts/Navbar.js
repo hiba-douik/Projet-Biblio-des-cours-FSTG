@@ -2,7 +2,6 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import Home from '../../../pages/Home'
 
-
 function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg">
@@ -23,11 +22,10 @@ function Navbar() {
         <strong>
           {/* <span>Little</span> Fashion */}
           <img style={{ maxWidth : 130}} src="logo.png" className="img-fluid" alt="" />
-
         </strong>
       </Link>
       <div className="d-lg-none">
-        <a href="sign-in.html" className="bi-person custom-icon me-3" />
+        <Link to="/register" className="bi bi-person custom-icon me-3" />
         <a href="product-detail.html" className="bi-bag custom-icon" />
       </div>
       <div className="collapse navbar-collapse" id="navbarNav">
@@ -60,7 +58,7 @@ function Navbar() {
         </ul>
         <div className="d-none d-lg-block">
           <Link to="/register" className="bi bi-person custom-icon me-3" />
-          <Link to="/login" className="bi-bag custom-icon" />
+          <Link to="/login" className="bi bi-bag custom-icon" />
         </div>
       </div>
     </div>

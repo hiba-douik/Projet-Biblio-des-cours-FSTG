@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import Home from './pages/Home';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
@@ -8,7 +7,8 @@ import Contcat from './pages/Contcat';
 import NotFound from './pages/NotFound';
 import Register from './pages/Register';
 import Login from './components/Users/auth/Login';
-
+import Profile from './components/Users/auth/Profile';
+import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './components/Admin/pages/Dashboard';
 import LoginAdmin from './components/Admin/auth/LoginAdmin';
 import ListUsers from './components/Admin/users/ListUsers';
@@ -41,6 +41,7 @@ function App() {
       <Route path="/loginadmin" element={<LoginAdmin/>}/>
       {/* <Route path="/bibliotheques" element={<ListBibliotheque/>}/> */}
 
+
       <Route path="/dashboard" element={<Dashboard/>}/>
       <Route path="/dash" element={<Dashboard/>}/>
       <Route path="/bibliotheques" element={<ListeBibliotheque/>}/>
@@ -50,13 +51,23 @@ function App() {
       <Route path="/createdocuments" element={<CreateDoc/>}/>
       <Route path="/updateDocuments" element={<UpdateDocumentForm/>}/>
       <Route path="/documents" element={<DocList/>}/>
+
       <Route path="/about" element={<About/>}/>
       <Route path="/faq" element={<FAQs/>}/>
       <Route path="/contact" element={<Contcat/>}/>
       <Route path="/register" element={<Register/>}/>
       <Route path="/login" element={<Login/>}/>
-
+      <Route path="/profile" element={<Profile/>}/>
       <Route path="/*" element={<NotFound/>} />
+      <Route
+          path="/protected"
+          element={
+            <ProtectedRoute>
+                 
+                 
+            </ProtectedRoute>
+          }
+        />
       
       </Routes>
     </Router>
