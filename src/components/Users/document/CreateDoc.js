@@ -8,7 +8,7 @@ const AddDocumentForm = ({ onSubmit, onCancel }) => {
     description: '',
     type: '',
     filier: '',
-    niveux: '',
+    niveaux: '',
     file: null
   });
   const [dragActive, setDragActive] = useState(false);
@@ -49,9 +49,38 @@ const AddDocumentForm = ({ onSubmit, onCancel }) => {
 
   const handleFileInput = (e) => handleFileSelect(e.target.files[0]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (onSubmit) onSubmit(formData);
+    
+    const token = localStorage.getItem('token'); // Retrieve token from local storage
+    const formDataToSend = new FormData();
+
+    // Append form data
+    formDataToSend.append('titre', formData.titre);
+    formDataToSend.append('description', formData.description);
+    formDataToSend.append('filier', formData.filier);
+    formDataToSend.append('niveaux', formData.niveaux);
+    formDataToSend.append('file', formData.file);
+    
+    try {
+      const response = await fetch('http://localhost:9000/api/document/save', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`, // Include token in headers
+        },
+        body: formDataToSend,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de l\'ajout du document');
+      }
+      
+      const data = await response.json();
+      if (onSubmit) onSubmit(data);
+    } catch (error) {
+      console.error(error);
+      // Handle error (e.g., show an error message)
+    }
   };
 
   return (
