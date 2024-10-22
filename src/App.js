@@ -12,7 +12,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './components/Admin/pages/Dashboard';
 import LoginAdmin from './components/Admin/auth/LoginAdmin';
 import ListUsers from './components/Admin/users/ListUsers';
-import ListBibliotheque from './components/Admin/bibliotheque/ListBibliotheque';
 import CreateUsers from './components/Admin/users/CreateUser';
 import CreateBib from './components/Admin/Bibliotique/createBib';
 import UpdateBib from './components/Admin/Bibliotique/updateBib';
@@ -23,6 +22,8 @@ import CreateDoc from './components/Users/document/CreateDoc';
 import UpdateDocumentForm from './components/Users/document/UpdateDoc';
 import DocList  from './components/Users/document/Document';
 import EditUser from './components/Admin/users/EditUser';
+import Logout from './components/Users/auth/Logout';
+import ViewUser from './components/Admin/users/ViewUser';
 
 
 
@@ -34,6 +35,7 @@ function App() {
       <Route path="/listusers" element={<ListUsers/>}/>
       <Route path="/create-user" element={<CreateUsers/>}/>
       <Route path="/edit-user/:userId" element={<EditUser/>}/>
+      <Route path="/view-user/:userId" element={<ViewUser/>}/>
 
 
       <Route path="/" element={<Home/>}/>
@@ -59,6 +61,9 @@ function App() {
       <Route path="/login" element={<Login/>}/>
       <Route path="/profile" element={<Profile/>}/>
       <Route path="/*" element={<NotFound/>} />
+      
+      <Route path="/logout" element={<Logout/>} />
+
       <Route
           path="/protected"
           element={

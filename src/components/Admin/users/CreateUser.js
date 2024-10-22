@@ -9,80 +9,80 @@ function CreateUsers() {
     email: '',
     password: '',
     type: 'Etudient', // Default to 'Etudient'
-    image: null,          // Add image to state
+    image: null, // Add image to state
   });
 
-  const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  // Handle input changes
+  // Handle form field changes (text inputs)
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserData({
-      ...userData,
+    setUserData((prevState) => ({
+      ...prevState,
       [name]: value,
-    });
+    }));
   };
 
-  // Handle file input (image upload)
+  // Handle image input change
   const handleImageChange = (e) => {
-    setUserData({
-      ...userData,
-      image: e.target.files[0], // Store the selected image file
-    });
+    setUserData((prevState) => ({
+      ...prevState,
+      image: e.target.files[0], // Store the image file
+    }));
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Prepare FormData to include text and image data
     const formData = new FormData();
-  
-    // Append all form data
     formData.append('nom', userData.nom);
     formData.append('email', userData.email);
     formData.append('password', userData.password);
     formData.append('type', userData.type);
     if (userData.image) {
-      formData.append('image', userData.image); // Append the image file
+      formData.append('image', userData.image); // Append image only if selected
     }
-  
-    const API_BASE_URL = 'http://localhost:9000';
+
     try {
-      const response = await fetch(`${API_BASE_URL}/api/user/create`, {
+      const response = await fetch('http://localhost:9000/api/user/create', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('Token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+
+          'Content-Type': 'application/json'
         },
-        body: formData, // Use FormData instead of JSON
+        body: JSON.stringify(userData),
       });
-  
-      // Check for response status
-      if (!response.ok) {
-        // Try to read the response as JSON, but handle cases where it isn't valid JSON
-        let errorMessage = 'Failed to create user';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || 'Failed to create user';
-        } catch (jsonError) {
-          // If JSON parsing fails, fall back to a generic message
-          console.error('Failed to parse error response:', jsonError);
-        }
-        throw new Error(errorMessage);
+
+      if (response.ok) {
+        setSuccess('User created successfully!');
+        setError('');
+        setUserData({
+          nom: '',
+          email: '',
+          password: '',
+          type: 'Etudient',
+          image: null,
+        });
+        window.location.href = '/listusers'; // Redirect to user list
+      } else {
+        const errorMessage = await response.text();
+        setError(errorMessage || 'Registration failed. Please try again.');
+        setSuccess('');
       }
-  
-      setSuccess('User created successfully');
-      setError('');
-    } catch (err) {
-      setError(err.message || 'Error creating user');
+    } catch (error) {
+      setError('Registration failed. Please try again.');
       setSuccess('');
-      console.error('Error:', err);
     }
   };
 
   return (
     <>
       <SidebarAdmin />
-      <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+      <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
         <Navbar />
         <div className="container mt-5">
           <h2>Create User</h2>
@@ -94,7 +94,7 @@ function CreateUsers() {
               <label htmlFor="nom" className="form-label">Nom</label>
               <input
                 type="text"
-                className="form-control form-control bg-gray-400"
+                className="form-control bg-gray-400"
                 id="nom"
                 name="nom"
                 value={userData.nom}
@@ -108,7 +108,7 @@ function CreateUsers() {
               <label htmlFor="email" className="form-label">Email</label>
               <input
                 type="email"
-                className="form-control form-control bg-gray-400"
+                className="form-control bg-gray-400"
                 id="email"
                 name="email"
                 value={userData.email}

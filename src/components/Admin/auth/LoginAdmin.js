@@ -42,7 +42,7 @@ const LoginAdmin = () => {
 
       if (data.token) {
         // Store the token
-        localStorage.setItem('Token', data.token);
+        localStorage.setItem('token', data.token);
         
         // If remember me is checked, store the email
         if (formData.rememberMe) {

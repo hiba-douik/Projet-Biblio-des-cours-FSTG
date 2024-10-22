@@ -19,7 +19,7 @@ const ListUsers = () => {
       const response = await fetch(`${API_BASE_URL}/api/user/all`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('Token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
       if (!response.ok) {
@@ -38,10 +38,10 @@ const ListUsers = () => {
   const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/user/delete/${userId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/admin/user/delete/${userId}`, {
           method: 'DELETE',
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('Token')}`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });

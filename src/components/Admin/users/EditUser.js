@@ -2,15 +2,19 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../layouts/NavbarAdmin';
 import Footer from '../layouts/FooterAdmin';
 import SidebarAdmin from '../layouts/SidebarAdmin';
+import { useParams } from 'react-router-dom';
 
-function EditUser({ userId }) {
+function EditUser() {
+  const { userId } = useParams();  // Récupérer le paramètre userId depuis l'URL
+
   const [userData, setUserData] = useState({
     name: '',
     email: '',
     password: '', 
-    type: 'Etudient', // Default to 'Student'
+    type: 'Etudient', // Default to 'Etudient'
     image: null,          
   });
+  console.log(userId);
   
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
@@ -19,20 +23,25 @@ function EditUser({ userId }) {
 
   // Fetch user data when component mounts
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/user/${userId}`)
+    fetch(`${API_BASE_URL}/api/admin/user/${userId}`,{
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json',
+      },
+    })
       .then((response) => {
         if (!response.ok) throw new Error('Failed to fetch user data');
         return response.json();
       })
       .then((data) => {
         setUserData({
-          name: data.name,
+          name: data.nom,   // Assurez-vous que le champ correspond aux données de votre API (nom au lieu de name)
           email: data.email,
           type: data.type,
           image: null,
         });
       })
-
       .catch((error) => console.error('Error fetching user data:', error));
   }, [userId]);
 
@@ -64,16 +73,17 @@ function EditUser({ userId }) {
     if (userData.password) {
       formData.append('password', userData.password);
     }
-    formData.append('Type', userData.type);
+    formData.append('type', userData.type); // Assurez-vous que c'est 'userType' pour correspondre à l'API
     if (userData.image) {
       formData.append('image', userData.image);
     }
-
+console.log([...formData]);
     try {
       const response = await fetch(`${API_BASE_URL}/api/user/update/${userId}`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('Token')}`, // Ensure you're sending the token if needed
+          'Authorization': `Bearer ${localStorage.getItem('token')}`, // Ensure you're sending the token if needed
+
         },
         body: formData,
       });
@@ -87,14 +97,14 @@ function EditUser({ userId }) {
       setSuccess('User updated successfully');
       setError('');
       console.log('Updated User:', updatedUser);
+      window.location.href = '/listusers'; // Redirect to user list
+
     } catch (err) {
       setError(err.message || 'Error updating user');
       setSuccess('');
       console.error('Error:', err);
     }
   };
-
-  
 
   return (
     <>
@@ -111,7 +121,7 @@ function EditUser({ userId }) {
               <label htmlFor="name" className="form-label">Name</label>
               <input
                 type="text"
-                className="form-control form-control bg-gray-400"
+                className="form-control bg-gray-400"
                 id="name"
                 name="name"
                 value={userData.name}
@@ -125,7 +135,7 @@ function EditUser({ userId }) {
               <label htmlFor="email" className="form-label">Email</label>
               <input
                 type="email"
-                className="form-control form-control bg-gray-400"
+                className="form-control bg-gray-400"
                 id="email"
                 name="email"
                 value={userData.email}
