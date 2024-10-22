@@ -1,80 +1,103 @@
 import React, { useState } from 'react';
 import Navbar from '../layouts/NavbarAdmin';
-import Footer from '../layouts/FooterAdmin';
 import SidebarAdmin from '../layouts/SidebarAdmin';
 
 function CreateUsers() {
   // State to store user input, including the image
   const [userData, setUserData] = useState({
-    name: '',
+    nom: '',
     email: '',
     password: '',
-    userType: 'Etudient', // Default to 'Student'
-    image: null,          // Add image to state
+    type: 'Etudient', // Default to 'Etudient'
+    image: null, // Add image to state
   });
 
-  // Handle input changes
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  // Handle form field changes (text inputs)
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserData({
-      ...userData,
+    setUserData((prevState) => ({
+      ...prevState,
       [name]: value,
-    });
+    }));
   };
 
-  // Handle file input (image upload)
+  // Handle image input change
   const handleImageChange = (e) => {
-    setUserData({
-      ...userData,
-      image: e.target.files[0], // Store the selected image file
-    });
+    setUserData((prevState) => ({
+      ...prevState,
+      image: e.target.files[0], // Store the image file
+    }));
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Prepare FormData to include text and image data
     const formData = new FormData();
-    
-    // Append all form data
-    formData.append('name', userData.name);
+    formData.append('nom', userData.nom);
     formData.append('email', userData.email);
     formData.append('password', userData.password);
-    formData.append('userType', userData.userType);
+    formData.append('type', userData.type);
     if (userData.image) {
-      formData.append('image', userData.image); // Append the image file
+      formData.append('image', userData.image); // Append image only if selected
     }
 
-    console.log([...formData]);
+    try {
+      const response = await fetch('http://localhost:9000/api/user/create', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
 
-    // You can send the formData to the backend or API here, for example using fetch or axios
-    /*
-    fetch('https://your-api-url.com/users', {
-      method: 'POST',
-      body: formData,
-    })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error('Error:', error));
-    */
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (response.ok) {
+        setSuccess('User created successfully!');
+        setError('');
+        setUserData({
+          nom: '',
+          email: '',
+          password: '',
+          type: 'Etudient',
+          image: null,
+        });
+        window.location.href = '/listusers'; // Redirect to user list
+      } else {
+        const errorMessage = await response.text();
+        setError(errorMessage || 'Registration failed. Please try again.');
+        setSuccess('');
+      }
+    } catch (error) {
+      setError('Registration failed. Please try again.');
+      setSuccess('');
+    }
   };
-  
+
   return (
     <>
       <SidebarAdmin />
-      <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+      <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
         <Navbar />
         <div className="container mt-5">
           <h2>Create User</h2>
+          {success && <div className="alert alert-success">{success}</div>}
+          {error && <div className="alert alert-danger">{error}</div>}
           <form onSubmit={handleSubmit} encType="multipart/form-data">
             {/* Name input */}
             <div className="mb-3">
-              <label htmlFor="name" className="form-label">Name</label>
+              <label htmlFor="nom" className="form-label">Nom</label>
               <input
                 type="text"
-                className="form-control form-control bg-gray-400"
-                id="name"
-                name="name"
-                value={userData.name}
+                className="form-control bg-gray-400"
+                id="nom"
+                name="nom"
+                value={userData.nom}
                 onChange={handleChange}
                 required
               />
@@ -85,7 +108,7 @@ function CreateUsers() {
               <label htmlFor="email" className="form-label">Email</label>
               <input
                 type="email"
-                className="form-control form-control bg-gray-400"
+                className="form-control bg-gray-400"
                 id="email"
                 name="email"
                 value={userData.email}
@@ -110,12 +133,12 @@ function CreateUsers() {
 
             {/* User Type selection (Etudient or Professor) */}
             <div className="mb-3">
-              <label htmlFor="userType" className="form-label">User Type</label>
+              <label htmlFor="type" className="form-label">User Type</label>
               <select
                 className="form-select form-control bg-gray-400"
-                id="userType"
-                name="userType"
-                value={userData.userType}
+                id="type"
+                name="type"
+                value={userData.type}
                 onChange={handleChange}
                 required
               >
