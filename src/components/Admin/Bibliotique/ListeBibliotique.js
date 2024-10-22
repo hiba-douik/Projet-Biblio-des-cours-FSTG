@@ -4,6 +4,7 @@ import SidebarAdmin from '../layouts/SidebarAdmin';
 import Navbar from '../layouts/NavbarAdmin';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import Modal from 'react-modal';
 
 // Base Button Component
 const Button = ({ children, className, variant = "primary", size = "", ...props }) => (
@@ -101,7 +102,7 @@ const LibrariesTable = ({ libraries, onUpdate, onDelete }) => (
                                     <Button 
                                         variant="outline" 
                                         size="sm" 
-                                        onClick={() => onUpdate(library.id)}
+                                        onClick={() => onUpdate(library)}
                                     >
                                         <Pencil size={16} />
                                         Modifier
@@ -134,6 +135,8 @@ export default function ListeBibliotheque() {
     const [libraries, setLibraries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedLibrary, setSelectedLibrary] = useState({ nom: '', location: '' });
 
     useEffect(() => {
         fetchLibraries();
@@ -147,10 +150,6 @@ export default function ListeBibliotheque() {
                     Authorization: `Bearer ${token}`
                 }
             });
-
-            console.log('Raw API Response:', response);
-            console.log('Response data type:', typeof response.data);
-            console.log('Is array:', Array.isArray(response.data));
 
             if (response.data && Array.isArray(response.data)) {
                 const processedLibraries = response.data.map(lib => ({
@@ -171,9 +170,42 @@ export default function ListeBibliotheque() {
         }
     };
 
-    const handleUpdate = (id) => {
-        console.log(`Update library with id: ${id}`);
-        // Add your update logic here
+    const handleUpdate = (library) => {
+        setSelectedLibrary(library);
+        setIsModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setIsModalOpen(false);
+        setSelectedLibrary({ nom: '', location: '' }); // Reset the form
+    };
+
+    const handleFormChange = (e) => {
+        const { name, value } = e.target;
+        setSelectedLibrary(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.post('http://127.0.0.1:9000/api/admin/bibliotique/save', selectedLibrary, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.status === 201) {
+                // Successfully updated/created
+                fetchLibraries(); // Refresh the library list
+                handleModalClose(); // Close the modal
+                alert('Bibliothèque modifiée avec succès');
+            }
+        } catch (error) {
+            console.error('Error saving library:', error);
+            setError('Une erreur est survenue lors de la modification de la bibliothèque.');
+        }
     };
 
     const handleDelete = async (id) => {
@@ -194,7 +226,6 @@ export default function ListeBibliotheque() {
             if (response.status === 204 || response.status === 200) {
                 // Successfully deleted
                 setLibraries(prevLibraries => prevLibraries.filter(lib => lib.id !== id));
-                // Optional: Add success message
                 alert('Bibliothèque supprimée avec succès');
             }
         } catch (error) {
@@ -203,8 +234,6 @@ export default function ListeBibliotheque() {
                 switch (error.response.status) {
                     case 401:
                         setError('Session expirée. Veuillez vous reconnecter.');
-                        // Optionally redirect to login
-                        // window.location.href = '/login';
                         break;
                     case 403:
                         setError('Vous n\'avez pas les permissions nécessaires.');
@@ -260,27 +289,60 @@ export default function ListeBibliotheque() {
                     <Card className="mx-auto">
                         <CardHeader>
                             <div className="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <CardTitle>Liste des Bibliothèques</CardTitle>
-                                    <CardDescription>Gérez vos bibliothèques et médiathèques</CardDescription>
-                                </div>
-                                <Link to="/createBib" className="text-decoration-none">
-                                    <Button variant="success">
-                                        <Plus size={18} />
-                                        Ajouter une Bibliothèque
-                                    </Button>
-                                </Link>
+                                <CardTitle className="text-primary">Bibliothèques</CardTitle>
+                                <Button onClick={() => handleUpdate({ nom: '', location: '' })}>
+                                    <Plus size={18} /> Ajouter
+                                </Button>
                             </div>
+                            <CardDescription>Liste des bibliothèques et leurs documents associés.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <LibrariesTable 
-                                libraries={libraries}
-                                onUpdate={handleUpdate}
-                                onDelete={handleDelete}
-                            />
+                            <LibrariesTable libraries={libraries} onUpdate={handleUpdate} onDelete={handleDelete} />
                         </CardContent>
                     </Card>
                 </div>
+
+                {/* Modal for editing library */}
+                <Modal 
+                    isOpen={isModalOpen} 
+                    onRequestClose={handleModalClose} 
+                    contentLabel="Modifier Bibliothèque"
+                    ariaHideApp={false}
+                    className="Modal"
+                    overlayClassName="Overlay"
+                >
+                    <h2 className="mb-4">Modifier Bibliothèque</h2>
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-3">
+                            <label htmlFor="nom" className="form-label">Nom</label>
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                id="nom" 
+                                name="nom" 
+                                value={selectedLibrary.nom} 
+                                onChange={handleFormChange} 
+                                required 
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="location" className="form-label">Emplacement</label>
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                id="location" 
+                                name="location" 
+                                value={selectedLibrary.location} 
+                                onChange={handleFormChange} 
+                                required 
+                            />
+                        </div>
+                        <div className="d-flex justify-content-between">
+                            <Button onClick={handleModalClose} variant="outline">Annuler</Button>
+                            <Button type="submit" variant="primary">Soumettre</Button>
+                        </div>
+                    </form>
+                </Modal>
             </main>
         </>
     );
