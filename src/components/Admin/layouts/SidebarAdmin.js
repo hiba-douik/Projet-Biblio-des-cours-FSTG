@@ -11,7 +11,7 @@ function SidebarAdmin() {
      <link
     id="pagestyle"  
     href="template_admin/assets/css/material-dashboard.css?v=3.1.0"
-    rel="stylesheet"
+    rel="stylesheet" 
   />
     <div className="sidenav-header">
       <i

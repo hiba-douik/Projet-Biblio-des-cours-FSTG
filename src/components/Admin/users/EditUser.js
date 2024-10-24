@@ -23,7 +23,7 @@ function EditUser() {
 
   // Fetch user data when component mounts
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/admin/user/${userId}`,{
+    fetch(`${API_BASE_URL}/api/user/${userId}`,{
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -108,6 +108,7 @@ console.log([...formData]);
 
   return (
     <>
+
       <SidebarAdmin />
       <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
         <Navbar />
