@@ -4,6 +4,7 @@ import Footer from '../layouts/FooterAdmin';
 import SidebarAdmin from '../layouts/SidebarAdmin';
 import { useParams } from 'react-router-dom';
 
+
 function EditUser() {
   const { userId } = useParams();  // Récupérer le paramètre userId depuis l'URL
 
@@ -110,6 +111,7 @@ console.log([...formData]);
     <>
 
       <SidebarAdmin />
+
       <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
         <Navbar />
         <div className="container mt-5">
