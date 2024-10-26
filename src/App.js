@@ -24,6 +24,7 @@ import DocList  from './components/Users/document/Document';
 import EditUser from './components/Admin/users/EditUser';
 import Logout from './components/Users/auth/Logout';
 import ViewUser from './components/Admin/users/ViewUser';
+import DocumentByUserId from './components/Admin/document/DocumentByUserId';
 
 
 
@@ -32,24 +33,26 @@ function App() {
     <Router>
       <Routes>
       {/* user */}
+      <Route path="/" element={<Home/>}/>
+
       <Route path="/listusers" element={<ListUsers/>}/>
       <Route path="/create-user" element={<CreateUsers/>}/>
       <Route path="/edit-user/:userId" element={<EditUser/>}/>
       <Route path="/view-user/:userId" element={<ViewUser/>}/>
+      <Route path="/dashboard" element={<Dashboard/>}/>
+      <Route path="/dash" element={<Dashboard/>}/>
+      <Route path="/bibliotheques" element={<ListeBibliotheque/>}/>
+      <Route path="/createBib" element={<CreateBib/>}/>
+      <Route path="/updateBib/:Id" element={<UpdateBib/>}/>
+      <Route path="/documentList" element={<DocumentList/>}/>
+      <Route path="/document/user/:userId" element={<DocumentByUserId/>}/>
 
-
-      <Route path="/" element={<Home/>}/>
 
       <Route path="/loginadmin" element={<LoginAdmin/>}/>
       {/* <Route path="/bibliotheques" element={<ListBibliotheque/>}/> */}
 
 
-      <Route path="/dashboard" element={<Dashboard/>}/>
-      <Route path="/dash" element={<Dashboard/>}/>
-      <Route path="/bibliotheques" element={<ListeBibliotheque/>}/>
-      <Route path="/createBib" element={<CreateBib/>}/>
-      <Route path="/updateBib" element={<UpdateBib/>}/>
-      <Route path="/documentList" element={<DocumentList/>}/>
+      
       <Route path="/createdocuments" element={<CreateDoc/>}/>
       <Route path="/updateDocuments" element={<UpdateDocumentForm/>}/>
       <Route path="/documents" element={<DocList/>}/>
@@ -65,11 +68,12 @@ function App() {
       <Route path="/logout" element={<Logout/>} />
 
       <Route
-          path="/protected"
+          
           element={
             <ProtectedRoute>
                  
-                 
+                 <Route path="/listusers" element={<ListUsers/>}/>
+
             </ProtectedRoute>
           }
         />

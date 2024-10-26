@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import SidebarAdmin from '../layouts/SidebarAdmin';
 import Navbar from '../layouts/NavbarAdmin';
 import Footer from '../layouts/FooterAdmin';
+import Swal from 'sweetalert2';
+
 
 const API_BASE_URL = 'http://localhost:9000';
 
@@ -36,28 +38,43 @@ const ListUsers = () => {
   };
 
   const handleDelete = async (userId) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/admin/user/delete/${userId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this user?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/admin/user/delete/${userId}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json'
+            }
+          });
+  
+          if (!response.ok) {
+            throw new Error('Failed to delete user');
           }
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to delete user');
+  
+          setUsers(users.filter(user => user.id !== userId));
+          Swal.fire(
+            'Deleted!',
+            'User has been deleted successfully.',
+            'success'
+          );
+        } catch (err) {
+          setError('Error deleting user');
+          console.error('Error:', err);
+          Swal.fire('Error!', 'Failed to delete the user.', 'error');
         }
-
-        // Remove user from state
-        setUsers(users.filter(user => user.id !== userId));
-        alert('User deleted successfully');
-      } catch (err) {
-        setError('Error deleting user');
-        console.error('Error:', err);
       }
-    }
+    });
   };
 
   return (

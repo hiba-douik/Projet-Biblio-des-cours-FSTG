@@ -6,8 +6,10 @@ import Navbar from '../layouts/NavbarAdmin';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
+import { useParams } from 'react-router-dom';
 
-const DocumentList = () => {
+const DocumentByUserId = () => {
+    const { userId } = useParams();
   const [documents, setDocuments] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState(null);
@@ -17,7 +19,7 @@ const DocumentList = () => {
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-      const response = await axios.get('http://localhost:9000/api/admin/document/all', {
+      const response = await axios.get(`http://localhost:9000/api/document/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to request headers
         },
@@ -64,15 +66,7 @@ const DocumentList = () => {
     }
   };
 
-  const getTypeColor = (type) => {
-    const colors = {
-      'PDF': 'danger',
-      'DOCX': 'primary',
-      'TXT': 'success',
-      'default': 'secondary'
-    };
-    return colors[type] || colors.default;
-  };
+
 
   const filteredDocuments = documents.filter(doc =>
     doc.titre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -128,7 +122,7 @@ const DocumentList = () => {
                           <div className="text-muted">{document.description}</div>
                         </td>
                         <td className="px-4">
-                          <span className={`badge bg-${getTypeColor(document.type?.typeName)} bg-opacity-75`}>
+                          <span >
                             {document.type?.typeName}
                           </span>
                         </td>
@@ -230,4 +224,4 @@ const DocumentList = () => {
   );
 };
 
-export default DocumentList;
+export default DocumentByUserId;
