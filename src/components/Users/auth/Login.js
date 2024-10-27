@@ -31,6 +31,7 @@ function Login() {
            
             if (data.token) {
               localStorage.setItem('token', data.token);
+              
               navigate('/profile'); 
             } else {
               throw new Error('No token received');

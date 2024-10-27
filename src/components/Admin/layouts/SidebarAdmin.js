@@ -11,7 +11,7 @@ function SidebarAdmin() {
      <link
     id="pagestyle"  
     href="template_admin/assets/css/material-dashboard.css?v=3.1.0"
-    rel="stylesheet"
+    rel="stylesheet" 
   />
     <div className="sidenav-header">
       <i
@@ -92,13 +92,13 @@ function SidebarAdmin() {
     <div className="sidenav-footer position-absolute w-100 bottom-0 ">
       <div className="mx-3">
         
-        <a
+        <Link
           className="btn bg-gradient-primary w-100"
-          href="https://www.creative-tim.com/product/material-dashboard-pro?ref=sidebarfree"
+          to="/logout"
           type="button"
         >
           Logout
-        </a>
+        </Link>
       </div>
     </div>
     
