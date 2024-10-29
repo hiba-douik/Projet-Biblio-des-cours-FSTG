@@ -4,7 +4,7 @@ import { Trash2, FileText, Edit2 } from 'lucide-react';
 
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
+import { faThumbsUp, faThumbsDown, faFilePdf  } from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../layouts/NavbarAdmin';
 import SidebarAdmin from '../layouts/SidebarAdmin';
 
@@ -42,7 +42,7 @@ const DocumentByUserId = () => {
       })
       .then((data) => {
         setUser({
-          name: data.nom,   // Assurez-vous que le champ correspond aux données de votre API (nom au lieu de name)
+          nom: data.nom,   // Assurez-vous que le champ correspond aux données de votre API (nom au lieu de name)
           email: data.email,
           type: data.type,
           image: null,
@@ -127,6 +127,30 @@ const getTypeColor = (type) => {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('fr-FR');
   };
+  const formatFilePath = (fileName) => {
+    // Implement any specific formatting logic if needed, or simply return the file name
+    return fileName;
+  };
+  
+  const handleDownload = async (document) => {
+    const token = localStorage.getItem('token'); // Récupérer le token du stockage local
+  
+    if (!document.filePath) return;
+  
+    const filePath = formatFilePath(document.filePath.split('\\').pop());
+    const url = `http://localhost:9000/uploads/documents/${filePath}`; // Utilisez le chemin correct pour le fichier
+  
+    console.log("Download URL:", url);
+    console.log("Token:", token);
+  
+    try {
+      // Ouvrir le fichier PDF dans un nouvel onglet directement
+      window.open(url);
+    } catch (error) {
+      console.error("Error opening PDF:", error); // Log l'erreur
+      alert('Échec de l\'ouverture du fichier PDF.');
+    }
+  };
 
   return (
 <>            <SidebarAdmin />
@@ -172,82 +196,65 @@ const getTypeColor = (type) => {
             </div>
           </div>
 
-          {/* Main Content */} <button className="btn btn-sm btn-outline-primary"                            onClick={() => window.location.href = `/createDocuments`}>
-                        create document
-                      </button>
+          {/* Main Content */} 
 
           <div className="card border-0 shadow-sm">
             
             <div className="card-body p-0">
                 
               <div className="table-responsive">
-                <table className="table table-hover mb-0">
-                  <thead className="bg-light">
-                    <tr>
-                      <th className="border-0 px-4 py-3">Titre</th>
-                      <th className="border-0 px-4">Description</th>
-                      <th className="border-0 px-4">Type</th>
-                      <th className="border-0 px-4">Filière</th>
-                      <th className="border-0 px-4">Niveau</th>
-                      <th className="border-0 px-4">
-                        <FontAwesomeIcon icon={faThumbsUp} size="lg" className="text-success" /> Like
-                      </th>
-                      <th className="border-0 px-4">
-                        <FontAwesomeIcon icon={faThumbsDown} size="lg" className="text-danger" /> Dislike
-                      </th>
-                      <th className="border-0 px-4">Date</th>
-                      <th className="border-0 px-4 text-center">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredDocuments.map((document) => (
-                      <tr key={document.id}>
-                        <td className="px-4 py-3">
-                          <div className="fw-semibold text-dark">{document.titre}</div>
-                        </td>
-                        <td className="px-4">
-                          <div className="text-muted">{document.description}</div>
-                        </td>
-                        <td className="px-4">
-                          <span className={`badge bg-${getTypeColor(document.type?.typeName)} bg-opacity-75`}>
-                            {document.type?.typeName}
-                          </span>
-                        </td>
-                        <td className="px-4">{document.filier}</td>
-                        <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.user}</span>
-                        </td>
-                        <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.likes}</span>
-                        </td>
-                        <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.dislike}</span>
-                        </td>
-                        <td className="px-4">
-                          <small className="text-muted">
-                            {new Date(document.date).toLocaleDateString()}
-                          </small>
-                        </td>
-                        <td className="px-4 text-center">
-                          <button
-                            onClick={() => handleDelete(document)}
-                            className="btn btn-link text-danger p-2"
-                            title="Supprimer"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                          {/* <button
-                           onClick={() => window.location.href = `/updateDocuments/${document.id}`}
-                            className="btn btn-link text-danger p-2"
-                            title="Supprimer"
-                          >
-                            <Edit2 size={18} />
-                          </button> */}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <table className="table table-hover mb-0">
+              <thead className="bg-light">
+                <tr>
+                  <th className="border-0 px-4 py-3">Titre</th>
+                  <th className="border-0 px-4">Description</th>
+                  <th className="border-0 px-4">Type</th>
+                  <th className="border-0 px-4">Filière</th>
+                  <th className="border-0 px-4">Niveau</th>
+                  <th className="border-0 px-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredDocuments.map((document) => (
+                  <tr key={document.id}>
+                    <td className="px-4 py-3">
+                      <div className="fw-semibold text-dark">{document.titre}</div>
+                    </td>
+                    <td className="px-4">
+                      <div className="text-muted">{document.description}</div>
+                    </td>
+                    <td className="px-4">
+                      <span className={`badge bg-${getTypeColor(document.type?.typeName)} bg-opacity-75`}>
+                        {document.type?.typeName}
+                      </span>
+                    </td>
+                    <td className="px-4">{document.filier}</td>
+                    <td className="px-4">{document.niveaux}</td>
+                    <td className="px-4 text-center">
+                      {/* Download PDF Button */}
+                      {document.filePath && (
+                        <button
+                          onClick={() => handleDownload(document)} // Pass the document here
+                          className="btn btn-link text-primary p-2"
+                          title="Télécharger le PDF"
+                        >
+                          <FontAwesomeIcon icon={faFilePdf} size="lg" />
+                        </button>
+                      )}
+                      
+                      {/* Delete Button */}
+                      <button
+                        onClick={() => handleDelete(document)}
+                        className="btn btn-link text-danger p-2"
+                        title="Supprimer"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
               </div>
 
               {filteredDocuments.length === 0 && (
