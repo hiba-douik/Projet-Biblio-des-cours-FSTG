@@ -1,338 +1,133 @@
 import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Upload, X, File, Edit2 } from 'lucide-react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
-const EditDocumentForm = ({ documentId, onSubmit, onCancel }) => {
-  const [formData, setFormData] = useState({
-    titre: '',
-    description: '',
-    filier: '',
-    niveaux: '',
-    bibliothequeId: 1,
-    typeId: 1,
-    userId: 3,
-    file: null
-  });
-  
-  const [types, setTypes] = useState([]);
-  const [dragActive, setDragActive] = useState(false);
-  const [fileError, setFileError] = useState('');
-  const [submitError, setSubmitError] = useState('');
-  const [currentFileName, setCurrentFileName] = useState('');
-  
-  const filieres = ["Science", "Technologie", "Lettres", "Économie", "Droit"];
-  const niveaux = ["Licence 1", "Licence 2", "Licence 3", "Master 1", "Master 2", "Doctorat"];
+const UpdateDoc = () => {
+  const { documentId } = useParams();  // Récupérer le paramètre userId depuis l'URL
 
-  // Charger les données du document et les types au montage du composant
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Charger les types
-        const typesResponse = await fetch('http://localhost:9000/api/type/all', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
+    const [titre, setTitre] = useState('');
+    const [description, setDescription] = useState('');
+    const [filier, setFilier] = useState('');
+    const [niveaux, setNiveaux] = useState('');
+    const [bibliothequeId, setBibliothequeId] = useState('');
+    const [typeId, setTypeId] = useState('');
+    const [file, setFile] = useState(null);
+    const [userId, setUserId] = useState('');
+    const [submitError, setSubmitError] = useState('');
+    const [bibliotheques, setBibliotheques] = useState([]);
+    const [types, setTypes] = useState([]);
+    const token = localStorage.getItem('token'); // Retrieve token from local storage
+   
+
+    useEffect(() => {
+        // Charger les informations du document existant
+        axios.get(`http://localhost:9000/api/document/${documentId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+        .then(response => {
+            const data = response.data;
+            setTitre(data.titre);
+            setDescription(data.description);
+            setFilier(data.filier);
+            setNiveaux(data.niveaux);
+            setBibliothequeId(data.bibliothequeId);
+            setTypeId(data.typeId);
+            setUserId(data.userId);
+        })
+        .catch(error => {
+            console.error("Erreur lors du chargement du document :", error);
         });
-        const typesData = await typesResponse.json();
-        setTypes(typesData);
 
-        // Charger les données du document
-        const documentResponse = await fetch(`http://localhost:9000/api/document/${documentId}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        
-        if (!documentResponse.ok) throw new Error('Erreur lors du chargement du document');
-        
-        const documentData = await documentResponse.json();
-        setFormData({
-          titre: documentData.titre,
-          description: documentData.description,
-          filier: documentData.filier,
-          niveaux: documentData.niveaux,
-          bibliothequeId: documentData.bibliotheque.id,
-          typeId: documentData.type.id,
-          userId: documentData.utilisateur.id,
-          file: null
-        });
-        setCurrentFileName(documentData.filePath.split('/').pop()); // Extraire le nom du fichier du chemin
+        // Charger les listes de bibliothèques et types pour les options de sélection
+        axios.get('http://localhost:9000/api/admin/bibliotique/all', { headers: { Authorization: `Bearer ${token}` } })
+            .then(response => setBibliotheques(response.data))
+            .catch(error => console.error("Erreur lors du chargement des bibliothèques :", error));
 
-      } catch (error) {
-        console.error('Erreur:', error);
-        setSubmitError('Erreur lors du chargement des données');
-      }
+        axios.get('http://localhost:9000/api/type/all', { headers: { Authorization: `Bearer ${token}` } })
+            .then(response => setTypes(response.data))
+            .catch(error => console.error("Erreur lors du chargement des types :", error));
+    }, [documentId, token]);
+
+    const handleFileChange = (event) => {
+        setFile(event.target.files[0]);
     };
 
-    fetchData();
-  }, [documentId]);
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+ const clientLogin = localStorage.getItem('clientLogin');
+        const formData = new FormData();
+        formData.append('titre', titre);
+        formData.append('description', description);
+        formData.append('filier', filier);
+        formData.append('niveaux', niveaux);
+        formData.append('bibliothequeId', bibliothequeId);
+        formData.append('typeId', typeId);
+        formData.append('userid', 1);
+        if (file) formData.append('file', file);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+        try {
+            await axios.put(`http://localhost:9000/api/document/${documentId}`, formData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            alert("Document mis à jour avec succès !");
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du document :", error);
+            setSubmitError("Erreur lors de la mise à jour du document. Veuillez réessayer.");
+        }
+    };
 
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(e.type === "dragenter" || e.type === "dragover");
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    handleFileSelect(e.dataTransfer.files[0]);
-  };
-
-  const handleFileSelect = (file) => {
-    if (file && file.size <= 10 * 1024 * 1024) {
-      setFileError('');
-      setFormData(prev => ({
-        ...prev,
-        file: file
-      }));
-    } else {
-      setFileError('Le fichier ne doit pas dépasser 10MB');
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitError('');
-    
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Token d\'authentification manquant');
-      }
-
-      const formDataToSend = new FormData();
-      formDataToSend.append('titre', formData.titre);
-      formDataToSend.append('description', formData.description);
-      formDataToSend.append('filier', formData.filier);
-      formDataToSend.append('niveaux', formData.niveaux);
-      formDataToSend.append('bibliothequeId', formData.bibliothequeId);
-      formDataToSend.append('typeId', formData.typeId);
-      formDataToSend.append('userid', formData.userId);
-      if (formData.file) {
-        formDataToSend.append('file', formData.file);
-      }
-
-      const response = await fetch(`http://localhost:9000/api/document/${documentId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formDataToSend,
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message || `Erreur ${response.status}`);
-      }
-      
-      const data = await response.json();
-      if (onSubmit) {
-        onSubmit(data);
-      }
-      
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour:', error);
-      setSubmitError(error.message || 'Erreur lors de la mise à jour du document');
-    }
-  };
-
-  return (
-    <div className="container-fluid py-5 px-4 bg-light">
-      <div className="card border-0 shadow-sm">
-        <div className="card-header bg-white border-0 py-4 d-flex align-items-center">
-          <Edit2 size={24} className="text-primary me-2" />
-          <h5 className="mb-0 text-secondary">Modifier le Document</h5>
-        </div>
-        <div className="card-body p-4">
-          {submitError && (
-            <div className="alert alert-danger" role="alert">
-              {submitError}
+    return (
+        <form onSubmit={handleSubmit}>
+            <h3>Modifier Document</h3>
+            <div>
+                <label>Titre :</label>
+                <input type="text" value={titre} onChange={(e) => setTitre(e.target.value)}  />
             </div>
-          )}
-          
-          <form onSubmit={handleSubmit}>
-            <div className="row g-4">
-              {/* Zone de dépôt de fichier */}
-              <div className="col-12">
-                <div
-                  className={`border-2 border-dashed rounded-3 p-5 text-center ${
-                    dragActive ? 'bg-light border-primary' : 'border-secondary'
-                  }`}
-                  onDragEnter={handleDrag}
-                  onDragLeave={handleDrag}
-                  onDragOver={handleDrag}
-                  onDrop={handleDrop}
-                >
-                  {!formData.file ? (
-                    <div className="py-3">
-                      {currentFileName ? (
-                        <div className="mb-3">
-                          <File size={24} className="text-primary mb-2" />
-                          <p>Fichier actuel: {currentFileName}</p>
-                        </div>
-                      ) : null}
-                      <Upload size={48} className="text-primary mb-3" />
-                      <h5>Glissez et déposez un nouveau fichier ici</h5>
-                      <p className="text-muted mb-2">ou</p>
-                      <label className="btn btn-outline-primary mb-2">
-                        Choisir un fichier
-                        <input
-                          type="file"
-                          className="d-none"
-                          onChange={(e) => handleFileSelect(e.target.files[0])}
-                          accept=".pdf,.doc,.docx,.txt"
-                        />
-                      </label>
-                      <p className="text-muted small mb-0">
-                        Formats: PDF, DOC, DOCX, TXT (Max: 10MB)
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="d-flex align-items-center justify-content-between bg-light rounded p-3">
-                      <div className="d-flex align-items-center">
-                        <File size={24} className="text-primary me-3" />
-                        <div className="text-start">
-                          <h6 className="mb-1">{formData.file.name}</h6>
-                          <span className="text-muted small">
-                            {(formData.file.size / (1024 * 1024)).toFixed(2)} MB
-                          </span>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        className="btn btn-link text-danger p-2"
-                        onClick={() => setFormData(prev => ({ ...prev, file: null }))}
-                      >
-                        <X size={20} />
-                      </button>
-                    </div>
-                  )}
-                  {fileError && (
-                    <div className="text-danger mt-2 small">{fileError}</div>
-                  )}
-                </div>
-              </div>
-
-              {/* Champs du formulaire */}
-              <div className="col-md-6">
-                <div className="form-floating">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="titre"
-                    name="titre"
-                    value={formData.titre}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label htmlFor="titre">Titre du document</label>
-                </div>
-              </div>
-
-              <div className="col-md-6">
-                <div className="form-floating">
-                  <select
-                    className="form-select"
-                    id="typeId"
-                    name="typeId"
-                    value={formData.typeId}
-                    onChange={handleChange}
-                    required
-                  >
+            <div>
+                <label>Description :</label>
+                <textarea value={description} onChange={(e) => setDescription(e.target.value)}  />
+            </div>
+            <div>
+                <label>Filière :</label>
+                <input type="text" value={filier} onChange={(e) => setFilier(e.target.value)}  />
+            </div>
+            <div>
+                <label>Niveaux :</label>
+                <input type="text" value={niveaux} onChange={(e) => setNiveaux(e.target.value)}  />
+            </div>
+            <div>
+                <label>Bibliothèque :</label>
+                <select value={bibliothequeId} onChange={(e) => setBibliothequeId(e.target.value)} >
+                    <option value="">Sélectionner une bibliothèque</option>
+                    {bibliotheques.map(bib => (
+                        <option key={bib.id} value={bib.id}>{bib.nom}</option>
+                    ))}
+                </select>
+            </div>
+            <div>
+                <label>Type :</label>
+                <select value={typeId} onChange={(e) => setTypeId(e.target.value)} required>
                     <option value="">Sélectionner un type</option>
                     {types.map(type => (
-                      <option key={type.id} value={type.id}>
-                        {type.name}
-                      </option>
+                        <option key={type.id} value={type.id}>{type.nom}</option>
                     ))}
-                  </select>
-                  <label htmlFor="typeId">Type de document</label>
-                </div>
-              </div>
-
-              <div className="col-md-6">
-                <div className="form-floating">
-                  <select
-                    className="form-select"
-                    id="filier"
-                    name="filier"
-                    value={formData.filier}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Sélectionner une filière</option>
-                    {filieres.map(filiere => (
-                      <option key={filiere} value={filiere}>{filiere}</option>
-                    ))}
-                  </select>
-                  <label htmlFor="filier">Filière</label>
-                </div>
-              </div>
-
-              <div className="col-md-6">
-                <div className="form-floating">
-                  <select
-                    className="form-select"
-                    id="niveaux"
-                    name="niveaux"
-                    value={formData.niveaux}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Sélectionner un niveau</option>
-                    {niveaux.map(niveau => (
-                      <option key={niveau} value={niveau}>{niveau}</option>
-                    ))}
-                  </select>
-                  <label htmlFor="niveaux">Niveau</label>
-                </div>
-              </div>
-
-              <div className="col-12">
-                <div className="form-floating">
-                  <textarea
-                    className="form-control"
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    style={{ height: '120px' }}
-                    required
-                  />
-                  <label htmlFor="description">Description</label>
-                </div>
-              </div>
-
-              <div className="col-12">
-                <div className="d-flex justify-content-end gap-3">
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary px-4"
-                    onClick={onCancel}
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary px-4"
-                  >
-                    Mettre à jour
-                  </button>
-                </div>
-              </div>
+                </select>
             </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
+            <div>
+                <label>Fichier :</label>
+                <input type="file" onChange={handleFileChange} />
+            </div>
+            <div >
+                <label>ID Utilisateur :</label>
+                <input type="number" value={userId} onChange={(e) => setUserId(e.target.value)}  />
+            </div>
+            <button type="submit">Mettre à jour</button>
+            {submitError && <p className="error">{submitError}</p>}
+        </form>
+    );
 };
 
-export default EditDocumentForm;
+export default UpdateDoc;

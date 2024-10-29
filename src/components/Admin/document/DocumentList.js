@@ -134,7 +134,7 @@ const DocumentList = () => {
                         </td>
                         <td className="px-4">{document.filier}</td>
                         <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.niveaux}</span>
+                          <span className="badge bg-info bg-opacity-75">{document.user}</span>
                         </td>
                         <td className="px-4">
                           <span className="badge bg-info bg-opacity-75">{document.likes}</span>
@@ -156,7 +156,7 @@ const DocumentList = () => {
                             <Trash2 size={18} />
                           </button>
                           <button
-                            onClick={() => handleUpdate(document)}
+                           onClick={() => window.location.href = `/updateDocuments/${document.id}`}
                             className="btn btn-link text-danger p-2"
                             title="Supprimer"
                           >

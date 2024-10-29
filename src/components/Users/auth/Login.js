@@ -11,42 +11,61 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrorMessage('');
+        setErrorMessage('');  // Réinitialise le message d'erreur
       
         try {
-          const response = await fetch('http://localhost:9000/api/auth/login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-          });
+            const loginResponse = await fetch('http://localhost:9000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
       
-          console.log('Response status:', response.status);
-          
-          if (response.ok) {
-            const data = await response.json();
-            console.log('Parsed response data:', data);
-      
-           
-            if (data.token) {
-              localStorage.setItem('token', data.token);
-              
-              navigate('/profile'); 
+            if (loginResponse.ok) {
+                const loginData = await loginResponse.json();
+                
+                if (loginData.token) {
+                    localStorage.setItem('token', loginData.token);
+                    
+                    // Récupère les informations utilisateur en utilisant le token
+                    const userResponse = await fetch(`http://localhost:9000/api/users/${email}`, {
+                        headers: {
+                            'Authorization': `Bearer ${loginData.token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (userResponse.ok) {
+                        const userData = await userResponse.json();
+                        const clientLogin = {
+                            token: loginData.token,
+                            ...userData  // Enregistre tous les attributs de l'utilisateur
+                        };
+
+                        localStorage.setItem('clientLogin', JSON.stringify(clientLogin));
+                        navigate('/profile');
+                    } else {
+                        throw new Error('Impossible de récupérer les informations utilisateur');
+                    }
+                } else {
+                    throw new Error('Token non reçu');
+                }
             } else {
-              throw new Error('No token received');
+                // Gestion des erreurs selon le statut de réponse
+                if (loginResponse.status === 401) {
+                    setErrorMessage('Email ou mot de passe incorrect.');
+                } else if (loginResponse.status === 400) {
+                    setErrorMessage('Requête invalide. Veuillez vérifier les informations fournies.');
+                } else {
+                    setErrorMessage('Erreur de connexion. Veuillez réessayer plus tard.');
+                }
             }
-          } else {
-            
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Login failed');
-          }
         } catch (error) {
-          console.error('Error during login:', error);
-          setErrorMessage(error.message);
+            console.error('Erreur lors de la connexion:', error);
+            setErrorMessage(error.message); // Affiche le message d'erreur capturé
         }
-      };
-      
+    };
   
     return (
         <div>

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import Home from '../../../pages/Home'
+const token = localStorage.getItem('token'); // Retrieve token from local storage
 
 function Navbar() {
   return (
@@ -57,9 +58,20 @@ function Navbar() {
           </li>
         </ul>
         <div className="d-none d-lg-block">
-          <Link to="/register" className="bi bi-person custom-icon me-3" />
-          <Link to="/login" className="bi bi-bag custom-icon" />
-        </div>
+  {token ? (
+        <>
+    <Link to="/profile" className="bi-person btn btn-sm btn-outline-primary m-lg-1" > Profile </Link>
+    <Link to="/logout" className="btn btn-sm btn-outline-info m-lg-1"> logout </Link>
+    </>
+  ) : (
+    // If the token does not exist, show Register and Login links
+    <>
+      <Link to="/register" className="bi-person btn btn-dark-blue  m-lg-1"> Register </Link>
+      <Link to="/login" className="bi-lock-fill btn btn-dark-blue  m-lg-1"> Login </Link>
+    </>
+  )}
+</div>
+
       </div>
     </div>
   </nav>

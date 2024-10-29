@@ -25,6 +25,7 @@ import EditUser from './components/Admin/users/EditUser';
 import Logout from './components/Users/auth/Logout';
 import ViewUser from './components/Admin/users/ViewUser';
 import DocumentByUserId from './components/Admin/document/DocumentByUserId';
+import UpdateDoc from './components/Users/document/UpdateDoc';
 
 
 
@@ -54,7 +55,7 @@ function App() {
 
       
       <Route path="/createdocuments" element={<CreateDoc/>}/>
-      <Route path="/updateDocuments" element={<UpdateDocumentForm/>}/>
+      <Route path="/updateDocuments/:documentId" element={<UpdateDoc/>}/>
       <Route path="/documents" element={<DocList/>}/>
 
       <Route path="/about" element={<About/>}/>
@@ -67,16 +68,14 @@ function App() {
       
       <Route path="/logout" element={<Logout/>} />
 
-      <Route
+      <Route path="" element={<ProtectedRoute />}>
           
-          element={
-            <ProtectedRoute>
                  
                  <Route path="/listusers" element={<ListUsers/>}/>
 
-            </ProtectedRoute>
-          }
-        />
+      </Route>      
+          
+        
       
       </Routes>
     </Router>
