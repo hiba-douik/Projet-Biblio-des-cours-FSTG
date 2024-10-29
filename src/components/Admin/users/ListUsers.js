@@ -143,14 +143,13 @@ const ListUsers = () => {
                               <td>
                                 <div className="d-flex px-2 py-1">
                                   <div>
-                                    <Link to={`/document/user/${user.id}`}>
                                    
                                     <img
                                       src="/api/placeholder/40/40"
                                       className="avatar avatar-sm me-3 border-radius-lg"
                                       alt={user.nom}
                                     />
-                                     </Link>
+                                     
                                   </div>
                                   <div className="d-flex flex-column justify-content-center">
                                     <h6 className="mb-0 text-sm">{user.nom} </h6>
@@ -188,6 +187,14 @@ const ListUsers = () => {
                                 >
                                   Delete
                                 </button>
+
+                                <button
+                                  className="text-danger font-weight-bold text-xs btn btn-link"
+                                
+                                  onClick={() => (window.location.href = `/document/user/${user.id}`)}
+                                  >
+                                    view
+                                    </button>
                               </td>
                             </tr>
                           ))

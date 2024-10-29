@@ -155,13 +155,13 @@ const DocumentList = () => {
                           >
                             <Trash2 size={18} />
                           </button>
-                          <button
+                          {/* <button
                            onClick={() => window.location.href = `/updateDocuments/${document.id}`}
                             className="btn btn-link text-danger p-2"
                             title="Supprimer"
                           >
                             <Edit2 size={18} />
-                          </button>
+                          </button> */}
                         </td>
                       </tr>
                     ))}

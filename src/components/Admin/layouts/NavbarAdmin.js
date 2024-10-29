@@ -53,7 +53,7 @@ function Navbar() {
          
           <li className="nav-item d-flex align-items-center">
             <a
-              href="../pages/sign-in.html"
+              
               className="nav-link text-body font-weight-bold px-0"
             >
               <i className="fa fa-user me-sm-1" />

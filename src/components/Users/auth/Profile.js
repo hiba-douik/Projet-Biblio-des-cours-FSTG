@@ -48,7 +48,7 @@ const Profile = () => {
   const confirmDelete = async () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-      await axios.delete(`http://localhost:9000/api/admin/document/delete/${documentToDelete.id}`, {
+      await axios.delete(`http://localhost:9000/api/document/delete/${documentToDelete.id}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to request headers
           'Content-Type': 'application/json'
