@@ -3,6 +3,7 @@ import SidebarAdmin from '../layouts/SidebarAdmin';
 import Navbar from '../layouts/NavbarAdmin';
 import Footer from '../layouts/FooterAdmin';
 import Swal from 'sweetalert2';
+import { Link } from 'lucide-react';
 
 
 const API_BASE_URL = 'http://localhost:9000';
@@ -142,11 +143,13 @@ const ListUsers = () => {
                               <td>
                                 <div className="d-flex px-2 py-1">
                                   <div>
+                                   
                                     <img
                                       src="/api/placeholder/40/40"
                                       className="avatar avatar-sm me-3 border-radius-lg"
                                       alt={user.nom}
                                     />
+                                     
                                   </div>
                                   <div className="d-flex flex-column justify-content-center">
                                     <h6 className="mb-0 text-sm">{user.nom} </h6>
@@ -184,6 +187,14 @@ const ListUsers = () => {
                                 >
                                   Delete
                                 </button>
+
+                                <button
+                                  className="text-danger font-weight-bold text-xs btn btn-link"
+                                
+                                  onClick={() => (window.location.href = `/document/user/${user.id}`)}
+                                  >
+                                    view
+                                    </button>
                               </td>
                             </tr>
                           ))

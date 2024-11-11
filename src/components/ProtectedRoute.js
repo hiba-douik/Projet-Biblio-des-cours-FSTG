@@ -1,43 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute() {
   const token = localStorage.getItem('token');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    const verifyToken = async () => {
-      try {
-        const response = await fetch('http://localhost:9000/api/auth/verify-token', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error('Error verifying token:', error);
-        setIsAuthenticated(false); 
-      }
-    };
-
-    if (token) {
-      verifyToken();
-    } else {
-      setIsAuthenticated(false);
-    }
-  }, [token]);
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+  // Check if user has token and is an admin
+  // if (!token || !userInfo || userInfo.type !== 'admin') {
+  //   return <Navigate to="/login" replace />;
+  // }
+// Check if user has token and is an admin
+  if (!token  ) {
+    return <Navigate to="/login" replace />;
   }
-
-  return children;
-}
+  return <Outlet />; // Render child routes
+};
 
 export default ProtectedRoute;

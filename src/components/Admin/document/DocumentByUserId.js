@@ -1,23 +1,60 @@
 import React, { useState, useEffect } from 'react';
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link, useParams } from 'react-router-dom';
 import { Trash2, FileText, Edit2 } from 'lucide-react';
-import SidebarAdmin from '../layouts/SidebarAdmin';
-import Navbar from '../layouts/NavbarAdmin';
+
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
-import { useParams } from 'react-router-dom';
+import { faThumbsUp, faThumbsDown, faFilePdf  } from '@fortawesome/free-solid-svg-icons';
+import Navbar from '../layouts/NavbarAdmin';
+import SidebarAdmin from '../layouts/SidebarAdmin';
+
 
 const DocumentByUserId = () => {
-    const { userId } = useParams();
+  const { userId } = useParams();  // Récupérer le paramètre userId depuis l'URL
+
+  // Données exemple pour l'utilisateur
   const [documents, setDocuments] = useState([]);
+  const [user1, setUser] = useState([]);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem('clientLogin')); 
+    if (userInfo) setUser(userInfo);
+  }, []);
+  
+ 
+  const API_BASE_URL = 'http://localhost:9000';
+
+  // Fetch user data when component mounts
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/user/${userId}`,{
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error('Failed to fetch user data');
+        return response.json();
+      })
+      .then((data) => {
+        setUser({
+          nom: data.nom,   // Assurez-vous que le champ correspond aux données de votre API (nom au lieu de name)
+          email: data.email,
+          type: data.type,
+          image: null,
+        });
+      })
+      .catch((error) => console.error('Error fetching user data:', error));
+  }, [userId]);
 
   // Function to fetch documents from the API
   const fetchDocuments = async () => {
     try {
+
       const token = localStorage.getItem('token'); // Retrieve token from local storage
       const response = await axios.get(`http://localhost:9000/api/document/user/${userId}`, {
         headers: {
@@ -36,16 +73,10 @@ const DocumentByUserId = () => {
     fetchDocuments(); // Fetch documents on component mount
   }, []);
 
-  const handleDelete = (document) => {
-    setDocumentToDelete(document);
-    setShowDeleteModal(true);
-  };
-
-  // Function to confirm delete action
   const confirmDelete = async () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-      await axios.delete(`http://localhost:9000/api/admin/document/delete/${documentToDelete.id}`, {
+      await axios.delete(`http://localhost:9000/api/document/delete/${documentToDelete.id}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to request headers
           'Content-Type': 'application/json'
@@ -67,18 +98,93 @@ const DocumentByUserId = () => {
   };
 
 
+  const handleDelete = (document) => {
+    setDocumentToDelete(document);
+    setShowDeleteModal(true);
+  };
 
+  const user = {
+    id: "USR-001",
+    nom: user1.nom,
+    email: user1.email,
+    type: "client",
+    dateInscription: "2024-01-15"
+  };
   const filteredDocuments = documents.filter(doc =>
     doc.titre.toLowerCase().includes(searchTerm.toLowerCase()) ||
     doc.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+ 
+const getTypeColor = (type) => {
+    const colors = {
+      'PDF': 'danger',
+      'DOCX': 'primary',
+      'TXT': 'success',
+      'default': 'secondary'
+    };
+    return colors[type] || colors.default;
+  };
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('fr-FR');
+  };
+  const formatFilePath = (fileName) => {
+    // Implement any specific formatting logic if needed, or simply return the file name
+    return fileName;
+  };
+  
+  const handleDownload = async (document) => {
+    const token = localStorage.getItem('token'); // Récupérer le token du stockage local
+  
+    if (!document.filePath) return;
+  
+    const filePath = formatFilePath(document.filePath.split('\\').pop());
+    const url = `http://localhost:9000/uploads/documents/${filePath}`; // Utilisez le chemin correct pour le fichier
+  
+    console.log("Download URL:", url);
+    console.log("Token:", token);
+  
+    try {
+      // Ouvrir le fichier PDF dans un nouvel onglet directement
+      window.open(url);
+    } catch (error) {
+      console.error("Error opening PDF:", error); // Log l'erreur
+      alert('Échec de l\'ouverture du fichier PDF.');
+    }
+  };
 
   return (
-    <>     
-      <SidebarAdmin/>
-      <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-        <Navbar/>
-        <div className="container-fluid py-4 px-4" style={{ backgroundColor: '#f8f9fa' }}>
+<>            <SidebarAdmin />
+
+<main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+  <Navbar />
+
+    <div className="container mt-4">
+      {/* Profile Card */}
+      <div className="card mb-4 shadow">
+        <div className="card-body">
+          <div className="row align-items-center">
+            <div className="col-md-2 text-center">
+              <div 
+                className="rounded-circle d-flex align-items-center justify-content-center mx-auto bg-primary text-white"
+                style={{ width: '80px', height: '80px', fontSize: '2rem' }}
+              >
+                {user.nom}
+              </div>
+            </div>
+            <div className="col-md-10">
+              <h2>{user.nom}</h2>
+              <div className="badge bg-success me-2">{user.type}</div>
+              <p className="text-muted mb-1">{user.email}</p>
+              <small className="text-muted">
+                ID: {user.id} | Membre depuis: {user.nom}
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Documents Table */}
+      <div className="container-fluid py-4 px-4" style={{ backgroundColor: '#f8f9fa' }}>
           {/* Header Section */}
           <div className="row mb-4">
             <div className="col-md-6">
@@ -90,77 +196,65 @@ const DocumentByUserId = () => {
             </div>
           </div>
 
-          {/* Main Content */}
+          {/* Main Content */} 
+
           <div className="card border-0 shadow-sm">
+            
             <div className="card-body p-0">
+                
               <div className="table-responsive">
-                <table className="table table-hover mb-0">
-                  <thead className="bg-light">
-                    <tr>
-                      <th className="border-0 px-4 py-3">Titre</th>
-                      <th className="border-0 px-4">Description</th>
-                      <th className="border-0 px-4">Type</th>
-                      <th className="border-0 px-4">Filière</th>
-                      <th className="border-0 px-4">Niveau</th>
-                      <th className="border-0 px-4">
-                        <FontAwesomeIcon icon={faThumbsUp} size="lg" className="text-success" /> Like
-                      </th>
-                      <th className="border-0 px-4">
-                        <FontAwesomeIcon icon={faThumbsDown} size="lg" className="text-danger" /> Dislike
-                      </th>
-                      <th className="border-0 px-4">Date</th>
-                      <th className="border-0 px-4 text-center">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredDocuments.map((document) => (
-                      <tr key={document.id}>
-                        <td className="px-4 py-3">
-                          <div className="fw-semibold text-dark">{document.titre}</div>
-                        </td>
-                        <td className="px-4">
-                          <div className="text-muted">{document.description}</div>
-                        </td>
-                        <td className="px-4">
-                          <span >
-                            {document.type?.typeName}
-                          </span>
-                        </td>
-                        <td className="px-4">{document.filier}</td>
-                        <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.niveaux}</span>
-                        </td>
-                        <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.likes}</span>
-                        </td>
-                        <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.dislike}</span>
-                        </td>
-                        <td className="px-4">
-                          <small className="text-muted">
-                            {new Date(document.date).toLocaleDateString()}
-                          </small>
-                        </td>
-                        <td className="px-4 text-center">
-                          <button
-                            onClick={() => handleDelete(document)}
-                            className="btn btn-link text-danger p-2"
-                            title="Supprimer"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                          <button
-                            onClick={() => handleUpdate(document)}
-                            className="btn btn-link text-danger p-2"
-                            title="Supprimer"
-                          >
-                            <Edit2 size={18} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <table className="table table-hover mb-0">
+              <thead className="bg-light">
+                <tr>
+                  <th className="border-0 px-4 py-3">Titre</th>
+                  <th className="border-0 px-4">Description</th>
+                  <th className="border-0 px-4">Type</th>
+                  <th className="border-0 px-4">Filière</th>
+                  <th className="border-0 px-4">Niveau</th>
+                  <th className="border-0 px-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredDocuments.map((document) => (
+                  <tr key={document.id}>
+                    <td className="px-4 py-3">
+                      <div className="fw-semibold text-dark">{document.titre}</div>
+                    </td>
+                    <td className="px-4">
+                      <div className="text-muted">{document.description}</div>
+                    </td>
+                    <td className="px-4">
+                      <span className={`badge bg-${getTypeColor(document.type?.typeName)} bg-opacity-75`}>
+                        {document.type?.typeName}
+                      </span>
+                    </td>
+                    <td className="px-4">{document.filier}</td>
+                    <td className="px-4">{document.niveaux}</td>
+                    <td className="px-4 text-center">
+                      {/* Download PDF Button */}
+                      {document.filePath && (
+                        <button
+                          onClick={() => handleDownload(document)} // Pass the document here
+                          className="btn btn-link text-primary p-2"
+                          title="Télécharger le PDF"
+                        >
+                          <FontAwesomeIcon icon={faFilePdf} size="lg" />
+                        </button>
+                      )}
+                      
+                      {/* Delete Button */}
+                      <button
+                        onClick={() => handleDelete(document)}
+                        className="btn btn-link text-danger p-2"
+                        title="Supprimer"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
               </div>
 
               {filteredDocuments.length === 0 && (
@@ -219,8 +313,10 @@ const DocumentByUserId = () => {
             </div>
           )}
         </div>
-      </main>
-    </> 
+    </div>
+    </main>
+
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Upload, X, File, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const AddDocumentForm = ({ onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -18,6 +19,8 @@ const AddDocumentForm = ({ onSubmit, onCancel }) => {
   const [dragActive, setDragActive] = useState(false);
   const [fileError, setFileError] = useState('');
   const [submitError, setSubmitError] = useState('');
+  const navigate = useNavigate();
+
 
   // Fonction pour décoder le token JWT
   const decodeToken = (token) => {
@@ -72,7 +75,7 @@ const fetchUserId = async (email) => {
     // Charger les bibliothèques
     const fetchBibliotheques = async () => {
       try {
-        const response = await fetch('http://localhost:9000/api/admin/bibliotique/all', {
+        const response = await fetch('http://localhost:9000/api/bibliotique/all', {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -182,8 +185,10 @@ const fetchUserId = async (email) => {
       const data = await response.json();
       if (onSubmit) {
         onSubmit(data);
+
       }
-      
+                              navigate('/profile');
+
       // Réinitialiser le formulaire...
     } catch (error) {
       console.error('Erreur lors de l\'envoi:', error);
