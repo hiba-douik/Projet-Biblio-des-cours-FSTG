@@ -147,7 +147,7 @@ export default function ListeBibliotheque() {
     const fetchLibraries = async () => {
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.get('http://127.0.0.1:9000/api/admin/bibliotique/all', {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}`+'/api/admin/bibliotique/all', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -206,7 +206,7 @@ export default function ListeBibliotheque() {
         const token = localStorage.getItem('token');
         
         try {
-            const response = await axios.put(`http://127.0.0.1:9000/api/admin/bibliotique/update/${id}`, 
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/admin/bibliotique/update/${id}`, 
             null, {
                 params: { nom, location },
                 headers: {
@@ -243,7 +243,7 @@ export default function ListeBibliotheque() {
                 }
             
                 try {
-                    const response = await axios.delete(`http://127.0.0.1:9000/api/admin/bibliotique/delete/${id}`, {
+                    const response = await axios.delete(`${process.env.REACT_APP_API_URL}/api/admin/bibliotique/delete/${id}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Content-Type': 'application/json'

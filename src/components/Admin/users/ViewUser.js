@@ -8,7 +8,7 @@ function ViewUser() {
     const { userId } = useParams();  // Récupérer le paramètre userId depuis l'URL
 
   const [userData, setUserData] = useState(null);
-  const API_BASE_URL = 'http://localhost:9000';
+  const API_BASE_URL = `${process.env.REACT_APP_API_URL}`+'';
 
   useEffect(() => {
     // Fetch user data when component mounts

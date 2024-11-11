@@ -37,7 +37,7 @@ const AddDocumentForm = ({ onSubmit, onCancel }) => {
 const fetchUserId = async (email) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:9000/api/users/${email}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/${email}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -75,7 +75,7 @@ const fetchUserId = async (email) => {
     // Charger les bibliothèques
     const fetchBibliotheques = async () => {
       try {
-        const response = await fetch('http://localhost:9000/api/bibliotique/all', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}`+'/api/bibliotique/all', {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -95,7 +95,7 @@ const fetchUserId = async (email) => {
  useEffect(() => {
   const fetchTypes = async () => {
     try {
-      const response = await fetch('http://localhost:9000/api/type/all', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}`+'/api/type/all', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -169,7 +169,7 @@ const fetchUserId = async (email) => {
         }
       });
 
-      const response = await fetch('http://localhost:9000/api/document/save', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}`+'/api/document/save', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

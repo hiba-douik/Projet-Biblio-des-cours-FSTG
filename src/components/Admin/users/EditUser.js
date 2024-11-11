@@ -20,7 +20,7 @@ function EditUser() {
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
-  const API_BASE_URL = 'http://localhost:9000';
+  const API_BASE_URL = `${process.env.REACT_APP_API_URL}`+'';
 
   // Fetch user data when component mounts
   useEffect(() => {

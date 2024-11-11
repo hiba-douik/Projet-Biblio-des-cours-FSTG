@@ -14,7 +14,7 @@ function Login() {
         setErrorMessage('');  // Réinitialise le message d'erreur
       
         try {
-            const loginResponse = await fetch('http://localhost:9000/api/auth/login', {
+            const loginResponse = await fetch(`${process.env.REACT_APP_API_URL}`+"/api/auth/login", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ function Login() {
                     localStorage.setItem('token', loginData.token);
                     
                     // Récupère les informations utilisateur en utilisant le token
-                    const userResponse = await fetch(`http://localhost:9000/api/users/${email}`, {
+                    const userResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/${email}`, {
                         headers: {
                             'Authorization': `Bearer ${loginData.token}`,
                             'Content-Type': 'application/json',

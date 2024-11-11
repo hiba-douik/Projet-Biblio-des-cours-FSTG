@@ -24,7 +24,7 @@ const DocumentList = () => {
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:9000/api/document/all', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}`+'/api/document/all', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setDocuments(response.data);
@@ -40,7 +40,7 @@ const DocumentList = () => {
   const handleEdit = async (documentId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:9000/api/document/${documentId}`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/document/${documentId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEditData(response.data);
@@ -59,7 +59,7 @@ const DocumentList = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:9000/api/document/${editData.id}`, editData, {
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/document/${editData.id}`, editData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -85,7 +85,7 @@ const DocumentList = () => {
   const confirmDelete = async () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-      await axios.delete(`http://localhost:9000/api/document/delete/${documentToDelete.id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/document/delete/${documentToDelete.id}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to request headers
           'Content-Type': 'application/json'
