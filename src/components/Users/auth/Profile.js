@@ -28,7 +28,7 @@ const Profile = () => {
         const userInfo = JSON.parse(localStorage.getItem('clientLogin')); // Récupère les infos utilisateur depuis le localStorage
 
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-      const response = await axios.get(`http://localhost:9000/api/document/user/${userInfo.id}`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/document/user/${userInfo.id}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to request headers
         },
@@ -48,7 +48,7 @@ const Profile = () => {
   const confirmDelete = async () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-      await axios.delete(`http://localhost:9000/api/document/delete/${documentToDelete.id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/document/delete/${documentToDelete.id}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to request headers
           'Content-Type': 'application/json'

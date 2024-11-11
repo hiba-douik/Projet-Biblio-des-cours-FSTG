@@ -47,7 +47,7 @@ function CreateUsers() {
     }
 
     try {
-      const response = await fetch('http://localhost:9000/api/user/create', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}`+'/api/user/create', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

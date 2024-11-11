@@ -23,7 +23,7 @@ const LoginAdmin = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:9000/api/auth/login', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}`+'/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ const LoginAdmin = () => {
         localStorage.setItem('token', data.token);
 
         // Retrieve user information
-        const userResponse = await fetch(`http://localhost:9000/api/users/${formData.email}`, {
+        const userResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/${formData.email}`, {
           headers: {
             'Authorization': `Bearer ${data.token}`,
           },

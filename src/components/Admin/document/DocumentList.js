@@ -17,7 +17,7 @@ const DocumentList = () => {
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-      const response = await axios.get('http://localhost:9000/api/admin/document/all', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}`+'/api/admin/document/all', {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to request headers
         },
@@ -43,7 +43,7 @@ const DocumentList = () => {
   const confirmDelete = async () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-      await axios.delete(`http://localhost:9000/api/admin/document/delete/${documentToDelete.id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/admin/document/delete/${documentToDelete.id}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to request headers
           'Content-Type': 'application/json'
@@ -129,7 +129,7 @@ const DocumentList = () => {
                         </td>
                         <td className="px-4">
                           <span className={`badge bg-${getTypeColor(document.type?.typeName)} bg-opacity-75`}>
-                            {document.type?.typeName}
+                            {document.type.name}
                           </span>
                         </td>
                         <td className="px-4">{document.filier}</td>

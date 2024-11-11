@@ -21,7 +21,7 @@ const UpdateDoc = () => {
 
     useEffect(() => {
         // Charger les informations du document existant
-        axios.get(`http://localhost:9000/api/document/${documentId}`, {
+        axios.get(`${process.env.REACT_APP_API_URL}/api/document/${documentId}`, {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => {
@@ -39,11 +39,11 @@ const UpdateDoc = () => {
         });
 
         // Charger les listes de bibliothèques et types pour les options de sélection
-        axios.get('http://localhost:9000/api/admin/bibliotique/all', { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${process.env.REACT_APP_API_URL}`+'/api/admin/bibliotique/all', { headers: { Authorization: `Bearer ${token}` } })
             .then(response => setBibliotheques(response.data))
             .catch(error => console.error("Erreur lors du chargement des bibliothèques :", error));
 
-        axios.get('http://localhost:9000/api/type/all', { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${process.env.REACT_APP_API_URL}`+'/api/type/all', { headers: { Authorization: `Bearer ${token}` } })
             .then(response => setTypes(response.data))
             .catch(error => console.error("Erreur lors du chargement des types :", error));
     }, [documentId, token]);
@@ -66,7 +66,7 @@ const UpdateDoc = () => {
         if (file) formData.append('file', file);
 
         try {
-            await axios.put(`http://localhost:9000/api/document/${documentId}`, formData, {
+            await axios.put(`${process.env.REACT_APP_API_URL}/api/document/${documentId}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'

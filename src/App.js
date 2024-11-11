@@ -26,6 +26,7 @@ import Logout from './components/Users/auth/Logout';
 import ViewUser from './components/Admin/users/ViewUser';
 import DocumentByUserId from './components/Admin/document/DocumentByUserId';
 import UpdateDoc from './components/Users/document/UpdateDoc';
+import Product from './pages/Product';
 
 
 
@@ -51,6 +52,8 @@ function App() {
       <Route path="/contact" element={<Contcat/>}/>
       <Route path="/register" element={<Register/>}/>
       <Route path="/login" element={<Login/>}/>
+      <Route path="/product" element={<Product/>}/>
+
      
       <Route path="/*" element={<NotFound/>} />
       

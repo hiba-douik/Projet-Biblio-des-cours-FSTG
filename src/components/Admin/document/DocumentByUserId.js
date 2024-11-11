@@ -25,7 +25,7 @@ const DocumentByUserId = () => {
   }, []);
   
  
-  const API_BASE_URL = 'http://localhost:9000';
+  const API_BASE_URL = `${process.env.REACT_APP_API_URL}`+'';
 
   // Fetch user data when component mounts
   useEffect(() => {
@@ -56,7 +56,7 @@ const DocumentByUserId = () => {
     try {
 
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-      const response = await axios.get(`http://localhost:9000/api/document/user/${userId}`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/document/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to request headers
         },
@@ -76,7 +76,7 @@ const DocumentByUserId = () => {
   const confirmDelete = async () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-      await axios.delete(`http://localhost:9000/api/document/delete/${documentToDelete.id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/document/delete/${documentToDelete.id}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to request headers
           'Content-Type': 'application/json'
@@ -138,7 +138,7 @@ const getTypeColor = (type) => {
     if (!document.filePath) return;
   
     const filePath = formatFilePath(document.filePath.split('\\').pop());
-    const url = `http://localhost:9000/uploads/documents/${filePath}`; // Utilisez le chemin correct pour le fichier
+    const url = `${process.env.REACT_APP_API_URL}/uploads/documents/${filePath}`; // Utilisez le chemin correct pour le fichier
   
     console.log("Download URL:", url);
     console.log("Token:", token);
