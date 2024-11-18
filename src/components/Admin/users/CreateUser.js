@@ -64,7 +64,7 @@ function CreateUsers() {
           nom: '',
           email: '',
           password: '',
-          type: 'Etudient',
+          type: 'user',
           image: null,
         });
         window.location.href = '/listusers'; // Redirect to user list
@@ -142,8 +142,8 @@ function CreateUsers() {
                 onChange={handleChange}
                 required
               >
-                <option value="Etudient">Etudient (Student)</option>
-                <option value="Professeur">Professeur (Professor)</option>
+                <option value="User">Users (Student | Professor)</option>
+                <option value="Admin">Admin</option>
               </select>
             </div>
 

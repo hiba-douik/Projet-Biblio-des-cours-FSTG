@@ -16,11 +16,12 @@ import CreateUsers from './components/Admin/users/CreateUser';
 import CreateBib from './components/Admin/Bibliotique/createBib';
 import UpdateBib from './components/Admin/Bibliotique/updateBib';
 import ListeBibliotheque from './components/Admin/Bibliotique/ListeBibliotique';
+import Typemanagment from './components/Admin/types/ListTypes';
 
 import DocumentList from './components/Admin/document/DocumentList';
 import CreateDoc from './components/Users/document/CreateDoc';
-import UpdateDocumentForm from './components/Users/document/UpdateDoc';
-import DocList  from './components/Users/document/Document';
+// import UpdateDocumentForm from './components/Users/document/UpdateDoc';
+// import DocList  from './components/Users/document/Document';
 import EditUser from './components/Admin/users/EditUser';
 import Logout from './components/Users/auth/Logout';
 import ViewUser from './components/Admin/users/ViewUser';
@@ -74,8 +75,13 @@ function App() {
             <Route path="/documentList" element={<DocumentList/>}/>
             <Route path="/document/user/:userId" element={<DocumentByUserId/>}/>
             <Route path="/createdocuments" element={<CreateDoc/>}/>
+            <Route path="/list_types" element={<Typemanagment/>}/>
+
+
       <Route path="/updateDocuments/:documentId" element={<UpdateDoc/>}/>
-      <Route path="/documents" element={<DocList/>}/>
+
+
+      {/* <Route path="/documents" element={<DocList/>}/> */}
       <Route path="/profile" element={<Profile/>}/>
             
       </Route>      

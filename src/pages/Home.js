@@ -182,13 +182,11 @@ function Home() {
                 <div className="row">
                   <div className="col-lg-7 col-12">
                     <div className="ratio ratio-16x9">
-                      <iframe
-                        src="https://www.youtube-nocookie.com/embed/f_7JqPDWhfw?controls=0"
-                        title="YouTube video player"
-                        frameBorder={0}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen=""
-                      />
+                    <img
+                      src="images/book2.jpeg"
+                      className="img-fluid"
+                      alt=""
+                    />
                     </div>
                   </div>
                   <div className="col-lg-5 col-12">
@@ -217,63 +215,63 @@ function Home() {
                 <div className="row">
                   <div className="col-lg-7 col-12">
                     <img
-                      src="template_user/images/cody-lannom-G95AReIh_Ko-unsplash.jpeg"
+                      src="images/book1.jpg"
                       className="img-fluid"
                       alt=""
                     />
                   </div>
                   <div className="col-lg-5 col-12">
-  <div className="d-flex flex-column h-100 ms-lg-4 mt-lg-0 mt-5">
-    <h4 className="mb-3">How Can Our Library Assist You?</h4>
-    <p>
-      With years of service, we’ve supported countless patrons with a variety of learning resources and tools to enhance their knowledge and research.
-    </p>
-    <div className="skill-thumb mt-3">
-      <strong>Book Collection</strong>
-      <span className="float-end">95%</span>
-      <div className="progress">
-        <div
-          className="progress-bar progress-bar-primary"
-          role="progressbar"
-          aria-valuenow={95}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          style={{ width: "95%" }}
-        />
-      </div>
-      <strong>Research Support</strong>
-      <span className="float-end">85%</span>
-      <div className="progress">
-        <div
-          className="progress-bar progress-bar-primary"
-          role="progressbar"
-          aria-valuenow={85}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          style={{ width: "85%" }}
-        />
-      </div>
-      <strong>Online Resources</strong>
-      <span className="float-end">90%</span>
-      <div className="progress">
-        <div
-          className="progress-bar progress-bar-primary"
-          role="progressbar"
-          aria-valuenow={90}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          style={{ width: "90%" }}
-        />
-      </div>
-    </div>
-    <div className="mt-2 mt-lg-auto">
-      <a href="library-catalog.html" className="custom-link mb-2">
-        Explore Our Collection
-        <i className="bi-arrow-right ms-2" />
-      </a>
-    </div>
-  </div>
-</div>
+                    <div className="d-flex flex-column h-100 ms-lg-4 mt-lg-0 mt-5">
+                      <h4 className="mb-3">How Can Our Library Assist You?</h4>
+                      <p>
+                        With years of service, we’ve supported countless patrons with a variety of learning resources and tools to enhance their knowledge and research.
+                      </p>
+                      <div className="skill-thumb mt-3">
+                        <strong>Book Collection</strong>
+                        <span className="float-end">95%</span>
+                        <div className="progress">
+                          <div
+                            className="progress-bar progress-bar-primary"
+                            role="progressbar"
+                            aria-valuenow={95}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            style={{ width: "95%" }}
+                          />
+                        </div>
+                        <strong>Research Support</strong>
+                        <span className="float-end">85%</span>
+                        <div className="progress">
+                          <div
+                            className="progress-bar progress-bar-primary"
+                            role="progressbar"
+                            aria-valuenow={85}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            style={{ width: "85%" }}
+                          />
+                        </div>
+                        <strong>Online Resources</strong>
+                        <span className="float-end">90%</span>
+                        <div className="progress">
+                          <div
+                            className="progress-bar progress-bar-primary"
+                            role="progressbar"
+                            aria-valuenow={90}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            style={{ width: "90%" }}
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-2 mt-lg-auto">
+                        <a href="library-catalog.html" className="custom-link mb-2">
+                          Explore Our Collection
+                          <i className="bi-arrow-right ms-2" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
 
                 </div>
               </div>
@@ -287,7 +285,7 @@ function Home() {
         <div className="row align-items-center">
           <div className="col-lg-6 col-12">
             <img
-              src="template_user/images/retail-shop-owner-mask-social-distancing-shopping.jpg"
+              src="images/read5.jpg"
               className="img-fluid"
               alt=""
             />
@@ -321,7 +319,7 @@ function Home() {
             <div className="product-thumb">
               <a href="product-detail.html">
                 <img
-                  src="template_user/images/product/evan-mcdougall-qnh1odlqOmk-unsplash.jpeg"
+                  src="images/book1.jpg"
                   className="img-fluid product-image"
                   alt=""
                 />
@@ -353,7 +351,7 @@ function Home() {
             <div className="product-thumb">
               <a href="product-detail.html">
                 <img
-                  src="template_user/images/product/jordan-nix-CkCUvwMXAac-unsplash.jpeg"
+                  src="images/book1.jpg"
                   className="img-fluid product-image"
                   alt=""
                 />
@@ -384,7 +382,7 @@ function Home() {
             <div className="product-thumb">
               <a href="product-detail.html">
                 <img
-                  src="template_user/images/product/jordan-nix-CkCUvwMXAac-unsplash.jpeg"
+                  src="images/book1.jpg"
                   className="img-fluid product-image"
                   alt=""
                 />
