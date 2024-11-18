@@ -3,7 +3,8 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import About from './pages/About';
 import FAQs from './pages/FAQs';
-import Contact from './pages/Contact';
+
+import Contact from './pages/Contcat'
 import NotFound from './pages/NotFound';
 import Register from './pages/Register';
 import Login from './components/Users/auth/Login';
@@ -20,6 +21,7 @@ import DocumentList from './components/Admin/document/DocumentList';
 import CreateDoc from './components/Users/document/CreateDoc';
 import UpdateDocumentForm from './components/Users/document/UpdateDoc';
 import DocList from './components/Users/document/Document';
+import Typemanagment from './components/Admin/types/ListTypes';
 import EditUser from './components/Admin/users/EditUser';
 import Logout from './components/Users/auth/Logout';
 import ViewUser from './components/Admin/users/ViewUser';
@@ -39,8 +41,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/loginadmin" element={<LoginAdmin />} />
         <Route path="/product" element={<Product />} />
-        <Route path="/*" element={<NotFound />} />
         <Route path="/logout" element={<Logout />} />
+        <Route path="/*" element={<NotFound />} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
@@ -57,6 +59,7 @@ function App() {
           <Route path="/createdocuments" element={<CreateDoc />} />
           <Route path="/updateDocuments/:documentId" element={<UpdateDocumentForm />} />
           <Route path="/documents" element={<DocList />} />
+          <Route path="/list_types" element={<Typemanagment />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>

@@ -172,8 +172,8 @@ console.log([...formData]);
                 onChange={handleChange}
                 required
               >
-                <option value="Etudient">Etudient (Student)</option>
-                <option value="Professeur">Professeur (Professor)</option>
+                <option value="User">User (Student | Professeur)</option>
+                <option value="Admin">Admin</option>
               </select>
             </div>
 

@@ -65,7 +65,7 @@ function SidebarAdmin() {
             <div className="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i className="material-icons opacity-10">table_view</i>
             </div>
-            <span className="nav-link-text ms-1">bibliothèque</span>
+            <span className="nav-link-text ms-1">Bibliothèque</span>
           </Link>
         </li>
       
@@ -77,7 +77,18 @@ function SidebarAdmin() {
             <div className="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i className="material-icons opacity-10">view_in_ar</i>
             </div>
-            <span className="nav-link-text ms-1">documents </span>
+            <span className="nav-link-text ms-1">Documents </span>
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link
+            className="nav-link text-white "
+             to="/list_types"
+          >
+            <div className="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i className="material-icons opacity-10">view_in_ar</i>
+            </div>
+            <span className="nav-link-text ms-1">Type </span>
           </Link>
         </li>
        

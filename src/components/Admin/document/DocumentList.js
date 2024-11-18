@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// import 'bootstrap/dist/css/bootstrap.min.css';
-import { Trash2, FileText, Edit2 } from 'lucide-react';
+import { Trash2, Eye, Download } from 'lucide-react';
 import SidebarAdmin from '../layouts/SidebarAdmin';
 import Navbar from '../layouts/NavbarAdmin';
 import axios from 'axios';
@@ -9,101 +8,177 @@ import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 
 const DocumentList = () => {
   const [documents, setDocuments] = useState([]);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [documentToDelete, setDocumentToDelete] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedDocument, setSelectedDocument] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Function to fetch documents from the API
-  const fetchDocuments = async () => {
-    try {
-      const token = localStorage.getItem('token'); // Retrieve token from local storage
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}`+'/api/admin/document/all', {
-        headers: {
-          Authorization: `Bearer ${token}`, // Add token to request headers
-        },
-      });
-      console.log(response.data); // Log the response to check the data
-      setDocuments(response.data);
-    } catch (error) {
-      console.error('Error fetching documents:', error);
-    }
-  };
-  
-
+  // Configure axios interceptor for global error handling
   useEffect(() => {
-    fetchDocuments(); // Fetch documents on component mount
+    const interceptor = axios.interceptors.response.use(
+      response => response,
+      error => {
+        console.error('Axios interceptor caught error:', error);
+        return Promise.reject(error);
+      }
+    );
+
+    // Cleanup interceptor
+    return () => {
+      axios.interceptors.response.eject(interceptor);
+    };
   }, []);
 
-  const handleDelete = (document) => {
-    setDocumentToDelete(document);
-    setShowDeleteModal(true);
-  };
-
-  // Function to confirm delete action
-  const confirmDelete = async () => {
+  // Fetch all documents
+  const fetchDocuments = async () => {
     try {
-      const token = localStorage.getItem('token'); // Retrieve token from local storage
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/admin/document/delete/${documentToDelete.id}`, {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/document/all`, {
         headers: {
-          Authorization: `Bearer ${token}`, // Add token to request headers
-          'Content-Type': 'application/json'
-
+          Authorization: `Bearer ${token}`,
         },
       });
-
-      // Remove the deleted document from the state
-      setDocuments(documents.filter(doc => doc.id !== documentToDelete.id));
-
-      // Close the modal and reset the document to delete
-      setShowDeleteModal(false);
-      setDocumentToDelete(null);
-
-      console.log('Document deleted successfully');
+      setDocuments(response.data);
+      setError(null);
     } catch (error) {
-      console.error('Error deleting document:', error);
+      console.error('Error fetching documents:', error);
+      setError('Failed to load documents. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getTypeColor = (type) => {
-    const colors = {
-      'PDF': 'danger',
-      'DOCX': 'primary',
-      'TXT': 'success',
-      'default': 'secondary'
-    };
-    return colors[type] || colors.default;
+  // Fetch document details by ID
+  const fetchDocumentById = async (id) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/document/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setSelectedDocument(response.data);
+      setShowModal(true);
+      setError(null);
+    } catch (error) {
+      console.error('Error fetching document details:', error);
+      setError('Failed to load document details. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const filteredDocuments = documents.filter(doc =>
-    doc.titre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doc.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Delete document function
+  const deleteDocument = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/document/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      fetchDocuments();
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      alert('Failed to delete document. Please try again.');
+    }
+  };
+
+  // Enhanced download document function
+  const downloadDocument = async (id, filename, fileType) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/document/${id}/download`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: 'blob',
+      });
+
+      // Validate response
+      if (!response.data) {
+        throw new Error('No document data received');
+      }
+
+      // Determine file extension and MIME type
+      const extension = fileType || filename.split('.').pop() || 'pdf';
+      const mimeType = response.headers['content-type'] || `application/${extension}`;
+      const fullFilename = `${filename}.${extension}`;
+
+      // Create blob and trigger download
+      const blob = new Blob([response.data], { type: mimeType });
+      const url = window.URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fullFilename);
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      setError(null);
+    } catch (error) {
+      console.error('Detailed download error:', error);
+      
+      // Detailed error logging
+      if (error.response) {
+        console.error('Server response error:', error.response.data);
+        console.error('Status code:', error.response.status);
+        setError(`Download failed: ${error.response.status} - ${error.response.statusText}`);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+        setError('No response from server. Check your connection.');
+      } else {
+        console.error('Request setup error:', error.message);
+        setError(`Download failed: ${error.message}`);
+      }
+
+      alert(`Download Error: ${error.message}. Please check your connection and try again.`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch documents on component mount
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
+
+  // Render loading state
+  if (loading) {
+    return <div className="text-center mt-5">Loading...</div>;
+  }
+
+  // Render error state
+  if (error) {
+    return (
+      <div className="alert alert-danger text-center" role="alert">
+        {error}
+        <button onClick={fetchDocuments} className="btn btn-sm btn-outline-danger ml-2">
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <>     
-      <SidebarAdmin/>
-      <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-        <Navbar/>
-        <div className="container-fluid py-4 px-4" style={{ backgroundColor: '#f8f9fa' }}>
-          {/* Header Section */}
-          <div className="row mb-4">
-            <div className="col-md-6">
-              <h2 className="fw-bold text-primary mb-0">
-                <FileText className="me-2 d-inline-block" size={28} />
-                Gestion des Documents
-              </h2>
-              <p className="text-muted mt-1">Gérez vos documents académiques</p>
-            </div>
-          </div>
-
-          {/* Main Content */}
+    <>
+      <SidebarAdmin />
+      <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+        <Navbar />
+        <div className="container-fluid py-4 px-4">
           <div className="card border-0 shadow-sm">
-            <div className="card-body p-0">
-              <div className="table-responsive">
-                <table className="table table-hover mb-0">
-                  <thead className="bg-light">
-                    <tr>
-                      <th className="border-0 px-4 py-3">Titre</th>
+            <div className="table-responsive">
+              <table className="table table-hover">
+                <thead className="bg-light">
+                  <tr>
+                  <th className="border-0 px-4 py-3">Titre</th>
                       <th className="border-0 px-4">Description</th>
                       <th className="border-0 px-4">Type</th>
                       <th className="border-0 px-4">Filière</th>
@@ -114,119 +189,92 @@ const DocumentList = () => {
                       <th className="border-0 px-4">
                         <FontAwesomeIcon icon={faThumbsDown} size="lg" className="text-danger" /> Dislike
                       </th>
-                      <th className="border-0 px-4">Date</th>
-                      <th className="border-0 px-4 text-center">Actions</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {documents.map((doc) => (
+                    <tr key={doc.document.id}>
+                      <td>{doc.document.titre}</td>
+                      <td>{doc.document.description}</td>
+                      <td>{doc.document.type.name}</td>
+                      <td>{doc.document.filier}</td>
+                      <td>{doc.document.niveaux}</td>
+                      <td>{doc.document.likes}</td>
+                      <td>{doc.document.dislike}</td>
+                      <td>
+                        <button 
+                          className="btn btn-link text-info me-2" 
+                          onClick={() => fetchDocumentById(doc.document.id)} 
+                          title="View Document"
+                        >
+                          <Eye size={18} />
+                        </button>
+                        <button 
+                          className="btn btn-link text-success me-2" 
+                          onClick={() => downloadDocument(
+                            doc.document.id, 
+                            doc.document.titre, 
+                            doc.document.fileType
+                          )} 
+                          title="Download Document"
+                        >
+                          <Download size={18} />
+                        </button>
+                        <button 
+                          className="btn btn-link text-danger" 
+                          onClick={() => deleteDocument(doc.document.id)} 
+                          title="Delete Document"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {filteredDocuments.map((document) => (
-                      <tr key={document.id}>
-                        <td className="px-4 py-3">
-                          <div className="fw-semibold text-dark">{document.titre}</div>
-                        </td>
-                        <td className="px-4">
-                          <div className="text-muted">{document.description}</div>
-                        </td>
-                        <td className="px-4">
-                          <span className={`badge bg-${getTypeColor(document.type?.typeName)} bg-opacity-75`}>
-                            {document.type.name}
-                          </span>
-                        </td>
-                        <td className="px-4">{document.filier}</td>
-                        <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.user}</span>
-                        </td>
-                        <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.likes}</span>
-                        </td>
-                        <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.dislike}</span>
-                        </td>
-                        <td className="px-4">
-                          <small className="text-muted">
-                            {new Date(document.date).toLocaleDateString()}
-                          </small>
-                        </td>
-                        <td className="px-4 text-center">
-                          <button
-                            onClick={() => handleDelete(document)}
-                            className="btn btn-link text-danger p-2"
-                            title="Supprimer"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                          {/* <button
-                           onClick={() => window.location.href = `/updateDocuments/${document.id}`}
-                            className="btn btn-link text-danger p-2"
-                            title="Supprimer"
-                          >
-                            <Edit2 size={18} />
-                          </button> */}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {filteredDocuments.length === 0 && (
-                <div className="text-center py-5">
-                  <FileText size={48} className="text-muted mb-3" />
-                  <h5 className="text-muted">Aucun document trouvé</h5>
-                  <p className="text-muted mb-0">Ajoutez des documents ou modifiez vos critères de recherche</p>
-                </div>
-              )}
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
+        </div>
 
-          {/* Delete Modal */}
-          {showDeleteModal && (
-            <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-              <div className="modal-dialog modal-dialog-centered">
-                <div className="modal-content border-0 shadow">
-                  <div className="modal-header border-0">
-                    <h5 className="modal-title">Confirmer la suppression</h5>
+        {/* Document Modal */}
+        {showModal && selectedDocument && (
+          <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)', position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1050 }}>
+            <div className="modal-dialog modal-dialog-centered modal-lg">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">{selectedDocument.document.titre}</h5>
+                  <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                </div>
+                <div className="modal-body">
+                  <p><strong>Description:</strong> {selectedDocument.document.description}</p>
+                  <p><strong>Uploaded By:</strong> {selectedDocument.document.uploadedBy}</p>
+                  <p><strong>Uploaded On:</strong> {new Date(selectedDocument.document.uploadedAt).toLocaleDateString()}</p>
+                  
+                  <div className="mt-3 text-center">
                     <button 
-                      type="button" 
-                      className="btn-close" 
-                      onClick={() => setShowDeleteModal(false)}
-                    ></button>
-                  </div>
-                  <div className="modal-body">
-                    <div className="text-center mb-4">
-                      <div className="rounded-circle bg-danger bg-opacity-10 p-3 d-inline-block mb-3">
-                        <Trash2 size={32} className="text-danger" />
-                      </div>
-                      <h5>Êtes-vous sûr ?</h5>
-                      <p className="text-muted mb-0">
-                        Vous êtes sur le point de supprimer "{documentToDelete?.titre}". 
-                        Cette action est irréversible.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="modal-footer border-0">
-                    <button 
-                      type="button" 
-                      className="btn btn-light px-4"
-                      onClick={() => setShowDeleteModal(false)}
+                      className="btn btn-primary" 
+                      onClick={() => downloadDocument(
+                        selectedDocument.document.id, 
+                        selectedDocument.document.titre, 
+                        selectedDocument.document.fileType
+                      )}
                     >
-                      Annuler
-                    </button>
-                    <button 
-                      type="button" 
-                      className="btn btn-danger px-4" 
-                      onClick={confirmDelete}
-                    >
-                      Supprimer
+                      <Download size={18} className="me-2" /> Download Document
                     </button>
                   </div>
                 </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </main>
-    </> 
+    </>
   );
 };
 

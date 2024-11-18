@@ -11,8 +11,8 @@ function About() {
       <div className="row">
         <div className="col-lg-6 col-12 header-info">
           <h1>
-            <span className="d-block text-primary">Company</span>
-            <span className="d-block text-dark">Fashion</span>
+            <span className="d-block text-primary">LET READ </span>
+            <span className="d-block text-dark"> ME </span>
           </h1>
         </div>
       </div>
@@ -28,7 +28,7 @@ function About() {
       <div className="row">
         <div className="col-12">
           <h2 className="mb-5">
-            Meet our <span>team</span>
+            Notres  <span>equipe</span>
           </h2>
         </div>
         <div className="col-lg-4 mb-4 col-12">
@@ -39,17 +39,9 @@ function About() {
               alt=""
             />
             <div className="team-info">
-              <h5 className="mb-0">Don</h5>
-              <strong className="text-muted">Product, VP</strong>
+              <h5 className="mb-0">kaabouch mohamed</h5>
               {/* Button trigger modal */}
-              <button
-                type="button"
-                className="btn custom-modal-btn"
-                data-bs-toggle="modal"
-                data-bs-target="#don"
-              >
-                <i className="bi-plus-circle-fill" />
-              </button>
+             
             </div>
           </div>
         </div>
@@ -61,17 +53,9 @@ function About() {
               alt=""
             />
             <div className="team-info">
-              <h5 className="mb-0">Kelly</h5>
-              <strong className="text-muted">Marketing</strong>
+              <h5 className="mb-0">ait lhaj abdelilah</h5>
               {/* Button trigger modal */}
-              <button
-                type="button"
-                className="btn custom-modal-btn"
-                data-bs-toggle="modal"
-                data-bs-target="#kelly"
-              >
-                <i className="bi-plus-circle-fill" />
-              </button>
+            
             </div>
           </div>
         </div>
@@ -83,17 +67,9 @@ function About() {
               alt=""
             />
             <div className="team-info">
-              <h5 className="mb-0">Marie</h5>
-              <strong className="text-muted">Founder</strong>
+              <h5 className="mb-0">douik hiba</h5>
               {/* Button trigger modal */}
-              <button
-                type="button"
-                className="btn custom-modal-btn"
-                data-bs-toggle="modal"
-                data-bs-target="#marie"
-              >
-                <i className="bi-plus-circle-fill" />
-              </button>
+
             </div>
           </div>
         </div>
@@ -105,75 +81,27 @@ function About() {
       <div className="row">
         <div className="col-lg-9 mx-auto col-11">
           <h2 className="text-center">
-            Customer love, <br /> <span>Little</span> Fashion
+            Let   <span>READ</span> ME
           </h2>
           <div className="slick-testimonial">
             <div className="slick-testimonial-caption">
               <p className="lead">
-                Over three years in business, We’ve had the chance to work on a
-                variety of projects, with companies Lorem ipsum dolor sit amet
+              A book is a medium for recording information in the form of writing or images. Modern books are typically in codex format, composed of many pages that are bound together and protected by a cover; they were preceded by several earlier formats, including the scroll and the tablet. The book publishing process is the series of steps involved in their creation and dissemination.
+
+As a conceptual object, a book refers to a written work of substantial length, which may be distributed either physically or digitally as an ebook. These works can be broadly classified into fiction (containing invented content, often narratives) and non-fiction (containing content intended as factual truth). A physical book may not contain such a work: for example, it may contain only drawings, engravings, photographs, puzzles, or removable content like paper dolls. It may also be left empty for personal use, as in the case of account books, appointment books, autograph books, notebooks, diaries and sketchbooks.
+
+Books are sold at both regular stores and specialized bookstores, as well as online for delivery, and can be borrowed from libraries. The reception of books has led to a number of social consequences, including censorship.
               </p>
               <div className="slick-testimonial-client d-flex align-items-center mt-4">
-                <img
+                {/* <img
                   src="template_user/images/people/senior-man-wearing-white-face-mask-covid-19-campaign-with-design-space.jpeg"
                   className="img-fluid custom-circle-image me-3"
                   alt=""
-                />
-                <span>
+                /> */}
+                {/* <span>
                   George,{" "}
                   <strong className="text-muted">Digital Art Fashion</strong>
-                </span>
-              </div>
-            </div>
-            <div className="slick-testimonial-caption">
-              <p className="lead">
-                Over three years in business, We’ve had the chance to work on a
-                variety of projects, with companies Lorem ipsum dolor sit amet
-              </p>
-              <div className="slick-testimonial-client d-flex align-items-center mt-4">
-                <img
-                  src="template_user/images/people/beautiful-woman-face-portrait-brown-background.jpeg"
-                  className="img-fluid custom-circle-image me-3"
-                  alt=""
-                />
-                <span>
-                  Sandar,{" "}
-                  <strong className="text-muted">Zoom Fashion Idea</strong>
-                </span>
-              </div>
-            </div>
-            <div className="slick-testimonial-caption">
-              <p className="lead">
-                Over three years in business, We’ve had the chance to work on a
-                variety of projects, with companies Lorem ipsum dolor sit amet
-              </p>
-              <div className="slick-testimonial-client d-flex align-items-center mt-4">
-                <img
-                  src="template_user/images/people/portrait-british-woman.jpeg"
-                  className="img-fluid custom-circle-image me-3"
-                  alt=""
-                />
-                <span>
-                  Marie,{" "}
-                  <strong className="text-muted">Art Fashion Design</strong>
-                </span>
-              </div>
-            </div>
-            <div className="slick-testimonial-caption">
-              <p className="lead">
-                Over three years in business, We’ve had the chance to work on a
-                variety of projects, with companies Lorem ipsum dolor sit amet
-              </p>
-              <div className="slick-testimonial-client d-flex align-items-center mt-4">
-                <img
-                  src="template_user/images/people/woman-wearing-mask-face-closeup-covid-19-green-background.jpeg"
-                  className="img-fluid custom-circle-image me-3"
-                  alt=""
-                />
-                <span>
-                  Catherine,{" "}
-                  <strong className="text-muted">Dress Fashion</strong>
-                </span>
+                </span> */}
               </div>
             </div>
           </div>
