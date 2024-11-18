@@ -8,7 +8,7 @@ import Contact from './pages/Contcat'
 import NotFound from './pages/NotFound';
 import Register from './pages/Register';
 import Login from './components/Users/auth/Login';
-import Profile from './components/Users/Profile';
+import Profile from './components/Users/auth/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './components/Admin/pages/Dashboard';
 import LoginAdmin from './components/Admin/auth/LoginAdmin';
