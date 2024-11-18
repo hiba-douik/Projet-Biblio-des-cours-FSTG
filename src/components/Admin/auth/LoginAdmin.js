@@ -23,7 +23,7 @@ const LoginAdmin = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:9000/api/auth/login', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}`+'/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,16 +43,27 @@ const LoginAdmin = () => {
       if (data.token) {
         // Store the token
         localStorage.setItem('token', data.token);
-        
-        // If remember me is checked, store the email
-        if (formData.rememberMe) {
-          localStorage.setItem('rememberedEmail', formData.email);
-        } else {
-          localStorage.removeItem('rememberedEmail');
-        }
 
-        // Redirect to dashboard
-        window.location.href = '/dashboard';
+        // Retrieve user information
+        const userResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/${formData.email}`, {
+          headers: {
+            'Authorization': `Bearer ${data.token}`,
+          },
+        });
+
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          localStorage.setItem('AdminLogin', JSON.stringify({ token: data.token, ...userData }));
+          if (formData.rememberMe) {
+            localStorage.setItem('rememberedEmail', formData.email);
+          } else {
+            localStorage.removeItem('rememberedEmail');
+          }
+          // Redirect to dashboard
+          window.location.href = '/dashboard';
+        } else {
+          throw new Error('Unable to fetch user information');
+        }
       }
     } catch (err) {
       setError(err.message || 'An error occurred during login');
@@ -60,7 +71,6 @@ const LoginAdmin = () => {
       setLoading(false);
     }
   };
-
   return (
     <>  <link
     id="pagestyle"

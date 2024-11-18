@@ -1,9 +1,9 @@
 import './App.css';
-import Home from './pages/Home';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import Home from './pages/Home';
 import About from './pages/About';
 import FAQs from './pages/FAQs';
-import Contcat from './pages/Contcat';
+import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import Register from './pages/Register';
 import Login from './components/Users/auth/Login';
@@ -16,69 +16,52 @@ import CreateUsers from './components/Admin/users/CreateUser';
 import CreateBib from './components/Admin/Bibliotique/createBib';
 import UpdateBib from './components/Admin/Bibliotique/updateBib';
 import ListeBibliotheque from './components/Admin/Bibliotique/ListeBibliotique';
-
 import DocumentList from './components/Admin/document/DocumentList';
 import CreateDoc from './components/Users/document/CreateDoc';
 import UpdateDocumentForm from './components/Users/document/UpdateDoc';
-import DocList  from './components/Users/document/Document';
+import DocList from './components/Users/document/Document';
 import EditUser from './components/Admin/users/EditUser';
 import Logout from './components/Users/auth/Logout';
 import ViewUser from './components/Admin/users/ViewUser';
-
-
+import DocumentByUserId from './components/Admin/document/DocumentByUserId';
+import Product from './pages/Product';
 
 function App() {
   return (
     <Router>
       <Routes>
-      {/* user */}
-      <Route path="/listusers" element={<ListUsers/>}/>
-      <Route path="/create-user" element={<CreateUsers/>}/>
-      <Route path="/edit-user/:userId" element={<EditUser/>}/>
-      <Route path="/view-user/:userId" element={<ViewUser/>}/>
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/faq" element={<FAQs />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/loginadmin" element={<LoginAdmin />} />
+        <Route path="/product" element={<Product />} />
+        <Route path="/*" element={<NotFound />} />
+        <Route path="/logout" element={<Logout />} />
 
-
-      <Route path="/" element={<Home/>}/>
-
-      <Route path="/loginadmin" element={<LoginAdmin/>}/>
-      {/* <Route path="/bibliotheques" element={<ListBibliotheque/>}/> */}
-
-
-      <Route path="/dashboard" element={<Dashboard/>}/>
-      <Route path="/dash" element={<Dashboard/>}/>
-      <Route path="/bibliotheques" element={<ListeBibliotheque/>}/>
-      <Route path="/createBib" element={<CreateBib/>}/>
-      <Route path="/updateBib" element={<UpdateBib/>}/>
-      <Route path="/documentList" element={<DocumentList/>}/>
-      <Route path="/createdocuments" element={<CreateDoc/>}/>
-      <Route path="/updateDocuments" element={<UpdateDocumentForm/>}/>
-      <Route path="/documents" element={<DocList/>}/>
-    
-
-      <Route path="/about" element={<About/>}/>
-      <Route path="/faq" element={<FAQs/>}/>
-      <Route path="/contact" element={<Contcat/>}/>
-      <Route path="/register" element={<Register/>}/>
-      <Route path="/login" element={<Login/>}/>
-      <Route path="/profile" element={<Profile/>}/>
-      <Route path="/*" element={<NotFound/>} />
-      
-      <Route path="/logout" element={<Logout/>} />
-
-      <Route
-          path="/protected"
-          element={
-            <ProtectedRoute>
-                 
-                 
-            </ProtectedRoute>
-          }
-        />
-      
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/listusers" element={<ListUsers />} />
+          <Route path="/create-user" element={<CreateUsers />} />
+          <Route path="/edit-user/:userId" element={<EditUser />} />
+          <Route path="/view-user/:userId" element={<ViewUser />} />
+          <Route path="/bibliotheques" element={<ListeBibliotheque />} />
+          <Route path="/createBib" element={<CreateBib />} />
+          <Route path="/updateBib/:Id" element={<UpdateBib />} />
+          <Route path="/documentList" element={<DocumentList />} />
+          <Route path="/document/user/:userId" element={<DocumentByUserId />} />
+          <Route path="/createdocuments" element={<CreateDoc />} />
+          <Route path="/updateDocuments/:documentId" element={<UpdateDocumentForm />} />
+          <Route path="/documents" element={<DocList />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
       </Routes>
     </Router>
   );
 }
 
 export default App;
-

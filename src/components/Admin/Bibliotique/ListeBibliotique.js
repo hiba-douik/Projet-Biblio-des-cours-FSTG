@@ -4,6 +4,8 @@ import SidebarAdmin from '../layouts/SidebarAdmin';
 import Navbar from '../layouts/NavbarAdmin';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import Swal from 'sweetalert2';
+
 import Modal from 'react-modal';
 
 // Base Button Component
@@ -145,7 +147,7 @@ export default function ListeBibliotheque() {
     const fetchLibraries = async () => {
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.get('http://127.0.0.1:9000/api/admin/bibliotique/all', {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}`+'/api/admin/bibliotique/all', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -170,84 +172,95 @@ export default function ListeBibliotheque() {
         }
     };
 
+    // Fonction pour ouvrir la modale avec les données de la bibliothèque sélectionnée
     const handleUpdate = (library) => {
         setSelectedLibrary(library);
-        setIsModalOpen(true);
+        
+        Swal.fire({
+            title: 'Modifier Bibliothèque',
+            html: `
+                <input id="swal-input1" class="swal2-input" placeholder="Nom" value="${library.nom}">
+                <input id="swal-input2" class="swal2-input" placeholder="Location" value="${library.location}">
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Enregistrer',
+            preConfirm: () => {
+                const nom = document.getElementById('swal-input1').value;
+                const location = document.getElementById('swal-input2').value;
+                if (!nom || !location) {
+                    Swal.showValidationMessage('Tous les champs sont obligatoires');
+                    return false;
+                }
+                return { nom, location };
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const { nom, location } = result.value;
+                await updateBibliotheque(library.id, nom, location); // Appel à la fonction pour mettre à jour
+            }
+        });
     };
-
-    const handleModalClose = () => {
-        setIsModalOpen(false);
-        setSelectedLibrary({ nom: '', location: '' }); // Reset the form
-    };
-
-    const handleFormChange = (e) => {
-        const { name, value } = e.target;
-        setSelectedLibrary(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    
+    // Fonction de mise à jour via API
+    const updateBibliotheque = async (id, nom, location) => {
         const token = localStorage.getItem('token');
+        
         try {
-            const response = await axios.post('http://127.0.0.1:9000/api/admin/bibliotique/save', selectedLibrary, {
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/admin/bibliotique/update/${id}`, 
+            null, {
+                params: { nom, location },
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
-
-            if (response.status === 201) {
-                // Successfully updated/created
-                fetchLibraries(); // Refresh the library list
-                handleModalClose(); // Close the modal
-                alert('Bibliothèque modifiée avec succès');
+    
+            if (response.status === 200) {
+                Swal.fire('Succès', 'La bibliothèque a été mise à jour avec succès.', 'success');
+                fetchLibraries(); // Rafraîchir la liste des bibliothèques
             }
         } catch (error) {
-            console.error('Error saving library:', error);
-            setError('Une erreur est survenue lors de la modification de la bibliothèque.');
+            Swal.fire('Erreur', 'Une erreur est survenue lors de la mise à jour.', 'error');
+            console.error('Erreur lors de la mise à jour de la bibliothèque:', error);
         }
     };
-
     const handleDelete = async (id) => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            setError('Authentication token not found. Please login again.');
-            return;
-        }
-    
-        try {
-            const response = await axios.delete(`http://127.0.0.1:9000/api/admin/bibliotique/delete/${id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+        Swal.fire({
+            title: 'Êtes-vous sûr ?',
+            text: 'Voulez-vous vraiment supprimer cette bibliothèque ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Oui, supprimer !',
+            cancelButtonText: 'Annuler'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    setError('Authentication token not found. Please login again.');
+                    return;
                 }
-            });
-    
-            if (response.status === 204 || response.status === 200) {
-                // Successfully deleted
-                setLibraries(prevLibraries => prevLibraries.filter(lib => lib.id !== id));
-                alert('Bibliothèque supprimée avec succès');
-            }
-        } catch (error) {
-            console.error('Error deleting library:', error);
-            if (error.response) {
-                switch (error.response.status) {
-                    case 401:
-                        setError('Session expirée. Veuillez vous reconnecter.');
-                        break;
-                    case 403:
-                        setError('Vous n\'avez pas les permissions nécessaires.');
-                        break;
-                    case 404:
-                        setError('Bibliothèque non trouvée.');
-                        break;
-                    default:
-                        setError('Une erreur est survenue lors de la suppression.');
+            
+                try {
+                    const response = await axios.delete(`${process.env.REACT_APP_API_URL}/api/admin/bibliotique/delete/${id}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+            
+                    if (response.status === 204 || response.status === 200) {
+                        // Successfully deleted
+                        setLibraries(prevLibraries => prevLibraries.filter(lib => lib.id !== id));
+                        Swal.fire('Supprimée !', 'La bibliothèque a été supprimée avec succès.', 'success');
+                    }
+                } catch (error) {
+                    console.error('Error deleting library:', error);
+                    Swal.fire('Erreur', 'Une erreur est survenue lors de la suppression.', 'error');
                 }
-            } else {
-                setError('Erreur de connexion au serveur.');
             }
-        }
+        });
     };
 
     if (loading) {
@@ -290,8 +303,10 @@ export default function ListeBibliotheque() {
                         <CardHeader>
                             <div className="d-flex justify-content-between align-items-center">
                                 <CardTitle className="text-primary">Bibliothèques</CardTitle>
-                                <Button onClick={() => handleUpdate({ nom: '', location: '' })}>
-                                    <Plus size={18} /> Ajouter
+                                <Button >
+                                   <Link to="/createBib">
+                                   Ajouter
+                                   </Link> 
                                 </Button>
                             </div>
                             <CardDescription>Liste des bibliothèques et leurs documents associés.</CardDescription>
@@ -300,50 +315,13 @@ export default function ListeBibliotheque() {
                             <LibrariesTable libraries={libraries} onUpdate={handleUpdate} onDelete={handleDelete} />
                         </CardContent>
                     </Card>
+                    
                 </div>
 
-                {/* Modal for editing library */}
-                <Modal 
-                    isOpen={isModalOpen} 
-                    onRequestClose={handleModalClose} 
-                    contentLabel="Modifier Bibliothèque"
-                    ariaHideApp={false}
-                    className="Modal"
-                    overlayClassName="Overlay"
-                >
-                    <h2 className="mb-4">Modifier Bibliothèque</h2>
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label htmlFor="nom" className="form-label">Nom</label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                id="nom" 
-                                name="nom" 
-                                value={selectedLibrary.nom} 
-                                onChange={handleFormChange} 
-                                required 
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="location" className="form-label">Emplacement</label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                id="location" 
-                                name="location" 
-                                value={selectedLibrary.location} 
-                                onChange={handleFormChange} 
-                                required 
-                            />
-                        </div>
-                        <div className="d-flex justify-content-between">
-                            <Button onClick={handleModalClose} variant="outline">Annuler</Button>
-                            <Button type="submit" variant="primary">Soumettre</Button>
-                        </div>
-                    </form>
-                </Modal>
+              
             </main>
+
+            
         </>
     );
 }

@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../layouts/Navbar';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Trash2, FileText, Edit2 } from 'lucide-react';
 
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
+import { faThumbsUp, faThumbsDown, faFilePdf  } from '@fortawesome/free-solid-svg-icons';
+import Navbar from '../layouts/NavbarAdmin';
+import SidebarAdmin from '../layouts/SidebarAdmin';
 
 
-const Profile = () => {
+const DocumentByUserId = () => {
+  const { userId } = useParams();  // Récupérer le paramètre userId depuis l'URL
+
   // Données exemple pour l'utilisateur
   const [documents, setDocuments] = useState([]);
   const [user1, setUser] = useState([]);
@@ -22,13 +25,38 @@ const Profile = () => {
   }, []);
   
  
+  const API_BASE_URL = `${process.env.REACT_APP_API_URL}`+'';
+
+  // Fetch user data when component mounts
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/user/${userId}`,{
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error('Failed to fetch user data');
+        return response.json();
+      })
+      .then((data) => {
+        setUser({
+          nom: data.nom,   // Assurez-vous que le champ correspond aux données de votre API (nom au lieu de name)
+          email: data.email,
+          type: data.type,
+          image: null,
+        });
+      })
+      .catch((error) => console.error('Error fetching user data:', error));
+  }, [userId]);
+
   // Function to fetch documents from the API
   const fetchDocuments = async () => {
     try {
-        const userInfo = JSON.parse(localStorage.getItem('clientLogin')); // Récupère les infos utilisateur depuis le localStorage
 
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/document/user/${userInfo.id}`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/document/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to request headers
         },
@@ -86,41 +114,7 @@ const Profile = () => {
     doc.titre.toLowerCase().includes(searchTerm.toLowerCase()) ||
     doc.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  // Données exemple pour les documents
-//   const documents = [
-//     {
-//       id: 1,
-//       titre: "Rapport Annuel 2024",
-//       dateCreation: "2024-03-15",
-//       type: "PDF",
-//       taille: "2.5 MB",
-//       statut: "actif"
-//     },
-//     {
-//       id: 2,
-//       titre: "Présentation Projet Q1",
-//       dateCreation: "2024-02-28",
-//       type: "PPTX",
-//       taille: "5.1 MB",
-//       statut: "actif"
-//     },
-//     {
-//       id: 3,
-//       titre: "Budget 2024",
-//       dateCreation: "2024-01-10",
-//       type: "XLSX",
-//       taille: "1.8 MB",
-//       statut: "archivé"
-//     },
-//     {
-//       id: 4,
-//       titre: "Manuel Utilisateur",
-//       dateCreation: "2024-03-01",
-//       type: "PDF",
-//       taille: "3.2 MB",
-//       statut: "actif"
-//     }
-//   ];
+ 
 const getTypeColor = (type) => {
     const colors = {
       'PDF': 'danger',
@@ -133,9 +127,36 @@ const getTypeColor = (type) => {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('fr-FR');
   };
+  const formatFilePath = (fileName) => {
+    // Implement any specific formatting logic if needed, or simply return the file name
+    return fileName;
+  };
+  
+  const handleDownload = async (document) => {
+    const token = localStorage.getItem('token'); // Récupérer le token du stockage local
+  
+    if (!document.filePath) return;
+  
+    const filePath = formatFilePath(document.filePath.split('\\').pop());
+    const url = `${process.env.REACT_APP_API_URL}/uploads/documents/${filePath}`; // Utilisez le chemin correct pour le fichier
+  
+    console.log("Download URL:", url);
+    console.log("Token:", token);
+  
+    try {
+      // Ouvrir le fichier PDF dans un nouvel onglet directement
+      window.open(url);
+    } catch (error) {
+      console.error("Error opening PDF:", error); // Log l'erreur
+      alert('Échec de l\'ouverture du fichier PDF.');
+    }
+  };
 
   return (
-<>        <Navbar/>
+<>            <SidebarAdmin />
+
+<main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+  <Navbar />
 
     <div className="container mt-4">
       {/* Profile Card */}
@@ -175,82 +196,65 @@ const getTypeColor = (type) => {
             </div>
           </div>
 
-          {/* Main Content */} <button className="btn btn-sm btn-outline-primary"                            onClick={() => window.location.href = `/createDocuments`}>
-                        create document
-                      </button>
+          {/* Main Content */} 
 
           <div className="card border-0 shadow-sm">
             
             <div className="card-body p-0">
                 
               <div className="table-responsive">
-                <table className="table table-hover mb-0">
-                  <thead className="bg-light">
-                    <tr>
-                      <th className="border-0 px-4 py-3">Titre</th>
-                      <th className="border-0 px-4">Description</th>
-                      <th className="border-0 px-4">Type</th>
-                      <th className="border-0 px-4">Filière</th>
-                      <th className="border-0 px-4">Niveau</th>
-                      <th className="border-0 px-4">
-                        <FontAwesomeIcon icon={faThumbsUp} size="lg" className="text-success" /> Like
-                      </th>
-                      <th className="border-0 px-4">
-                        <FontAwesomeIcon icon={faThumbsDown} size="lg" className="text-danger" /> Dislike
-                      </th>
-                      <th className="border-0 px-4">Date</th>
-                      <th className="border-0 px-4 text-center">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredDocuments.map((document) => (
-                      <tr key={document.id}>
-                        <td className="px-4 py-3">
-                          <div className="fw-semibold text-dark">{document.titre}</div>
-                        </td>
-                        <td className="px-4">
-                          <div className="text-muted">{document.description}</div>
-                        </td>
-                        <td className="px-4">
-                          <span className={`badge bg-${getTypeColor(document.type?.typeName)} bg-opacity-75`}>
-                            {document.type?.typeName}
-                          </span>
-                        </td>
-                        <td className="px-4">{document.filier}</td>
-                        <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.user}</span>
-                        </td>
-                        <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.likes}</span>
-                        </td>
-                        <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.dislike}</span>
-                        </td>
-                        <td className="px-4">
-                          <small className="text-muted">
-                            {new Date(document.date).toLocaleDateString()}
-                          </small>
-                        </td>
-                        <td className="px-4 text-center">
-                          <button
-                            onClick={() => handleDelete(document)}
-                            className="btn btn-link text-danger p-2"
-                            title="Supprimer"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                          <button
-                           onClick={() => window.location.href = `/updateDocuments/${document.id}`}
-                            className="btn btn-link text-danger p-2"
-                            title="Supprimer"
-                          >
-                            <Edit2 size={18} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <table className="table table-hover mb-0">
+              <thead className="bg-light">
+                <tr>
+                  <th className="border-0 px-4 py-3">Titre</th>
+                  <th className="border-0 px-4">Description</th>
+                  <th className="border-0 px-4">Type</th>
+                  <th className="border-0 px-4">Filière</th>
+                  <th className="border-0 px-4">Niveau</th>
+                  <th className="border-0 px-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredDocuments.map((document) => (
+                  <tr key={document.id}>
+                    <td className="px-4 py-3">
+                      <div className="fw-semibold text-dark">{document.titre}</div>
+                    </td>
+                    <td className="px-4">
+                      <div className="text-muted">{document.description}</div>
+                    </td>
+                    <td className="px-4">
+                      <span className={`badge bg-${getTypeColor(document.type?.typeName)} bg-opacity-75`}>
+                        {document.type?.typeName}
+                      </span>
+                    </td>
+                    <td className="px-4">{document.filier}</td>
+                    <td className="px-4">{document.niveaux}</td>
+                    <td className="px-4 text-center">
+                      {/* Download PDF Button */}
+                      {document.filePath && (
+                        <button
+                          onClick={() => handleDownload(document)} // Pass the document here
+                          className="btn btn-link text-primary p-2"
+                          title="Télécharger le PDF"
+                        >
+                          <FontAwesomeIcon icon={faFilePdf} size="lg" />
+                        </button>
+                      )}
+                      
+                      {/* Delete Button */}
+                      <button
+                        onClick={() => handleDelete(document)}
+                        className="btn btn-link text-danger p-2"
+                        title="Supprimer"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
               </div>
 
               {filteredDocuments.length === 0 && (
@@ -310,8 +314,10 @@ const getTypeColor = (type) => {
           )}
         </div>
     </div>
+    </main>
+
     </>
   );
 };
 
-export default Profile;
+export default DocumentByUserId;

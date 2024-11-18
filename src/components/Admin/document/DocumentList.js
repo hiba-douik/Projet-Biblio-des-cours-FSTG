@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // import 'bootstrap/dist/css/bootstrap.min.css';
-import { Trash2, FileText } from 'lucide-react';
+import { Trash2, FileText, Edit2 } from 'lucide-react';
 import SidebarAdmin from '../layouts/SidebarAdmin';
 import Navbar from '../layouts/NavbarAdmin';
 import axios from 'axios';
@@ -17,7 +17,7 @@ const DocumentList = () => {
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-      const response = await axios.get('http://localhost:9000/api/admin/document/all', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}`+'/api/admin/document/all', {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to request headers
         },
@@ -43,9 +43,11 @@ const DocumentList = () => {
   const confirmDelete = async () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from local storage
-      await axios.delete(`http://localhost:9000/api/admin/document/delete/${documentToDelete.id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/admin/document/delete/${documentToDelete.id}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Add token to request headers
+          'Content-Type': 'application/json'
+
         },
       });
 
@@ -127,12 +129,12 @@ const DocumentList = () => {
                         </td>
                         <td className="px-4">
                           <span className={`badge bg-${getTypeColor(document.type?.typeName)} bg-opacity-75`}>
-                            {document.type?.typeName}
+                            {document.type.name}
                           </span>
                         </td>
                         <td className="px-4">{document.filier}</td>
                         <td className="px-4">
-                          <span className="badge bg-info bg-opacity-75">{document.niveaux}</span>
+                          <span className="badge bg-info bg-opacity-75">{document.user}</span>
                         </td>
                         <td className="px-4">
                           <span className="badge bg-info bg-opacity-75">{document.likes}</span>
@@ -153,6 +155,13 @@ const DocumentList = () => {
                           >
                             <Trash2 size={18} />
                           </button>
+                          {/* <button
+                           onClick={() => window.location.href = `/updateDocuments/${document.id}`}
+                            className="btn btn-link text-danger p-2"
+                            title="Supprimer"
+                          >
+                            <Edit2 size={18} />
+                          </button> */}
                         </td>
                       </tr>
                     ))}

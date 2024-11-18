@@ -105,7 +105,7 @@ export default function UpdateLibrary({ libraryId, onUpdate, onCancel }) {
     const token = localStorage.getItem('token'); // Get token from local storage
 
     try {
-      const response = await axios.post('http://127.0.0.1:9000/api/admin/bibliotique/save', library, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}`+'/api/admin/bibliotique/save', library, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` // Include token in the headers
