@@ -27,6 +27,7 @@ import Logout from './components/Users/auth/Logout';
 import ViewUser from './components/Admin/users/ViewUser';
 import DocumentByUserId from './components/Admin/document/DocumentByUserId';
 import Product from './pages/Product';
+import DocumentDetail from './pages/DocumentDetail'
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
         <Route path="/product" element={<Product />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/*" element={<NotFound />} />
+        <Route path="/document-detail" element={<DocumentDetail />} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>

@@ -3,6 +3,7 @@ import axios from 'axios';
 import Footer from '../components/Users/layouts/Footer';
 import Navbar from '../components/Users/layouts/Navbar';
 import { Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const styles = {
   searchContainer: `
@@ -78,6 +79,8 @@ function Product() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [documentsPerPage] = useState(9);
+
+  const navigate = useNavigate();
 
   const fetchDocuments = async () => {
     try {
@@ -172,14 +175,12 @@ function Product() {
                             </div>
 
                             <button
-                              type="button"
-                              className={styles.viewMoreButton}
-                              data-bs-toggle="modal"
-                              data-bs-target="#don"
-                            >
-                              <i className="bi-plus-circle-fill" />
-                              Voir plus
-                            </button>
+                                onClick={() => navigate(`/document/${document.id}`)}
+                                className={styles.viewMoreButton}
+                              >
+                                <i className="bi-plus-circle-fill" />
+                                Voir plus
+                              </button>
                           </div>
                         </div>
                       </div>
