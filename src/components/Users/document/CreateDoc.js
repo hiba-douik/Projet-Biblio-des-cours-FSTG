@@ -115,17 +115,7 @@ const fetchUserId = async (email) => {
   
   const filieres = ["Science", "Technologie", "Lettres", "Économie", "Droit"];
   const niveaux = ["Licence 1", "Licence 2", "Licence 3", "Master 1", "Master 2", "Doctorat"];
-  const libraryOptions = [
-    { id: 1, name: 'Bibliothèque 1' },
-    { id: 2, name: 'Bibliothèque 2' },
-    { id: 3, name: 'Bibliothèque 3' }
-  ];
-  
-  const documentTypeOptions = [
-    { id: 1, name: 'Article' },
-    { id: 2, name: 'Thèse' },
-    { id: 3, name: 'Mémoire' }
-  ];
+
  
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -280,21 +270,21 @@ const fetchUserId = async (email) => {
               {/* Champs du formulaire */}
               <div className="col-md-6">
         <div className="form-floating">
-        <select
-  className="form-select"
-  id="bibliothequeId"
-  name="bibliothequeId"
-  value={formData.bibliothequeId}
-  onChange={handleChange}
-  required
->
-  <option value="">Sélectionner une bibliothèque</option>
-  {libraryOptions.map(biblio => (
-    <option key={biblio.id} value={biblio.id}>
-      {biblio.name}
-    </option>
-  ))}
-</select>
+          <select
+            className="form-select"
+            id="bibliothequeId"
+            name="bibliothequeId"
+            value={formData.bibliothequeId}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Sélectionner une bibliothèque</option>
+            {bibliotheques.map(biblio => (
+              <option key={biblio.id} value={biblio.id}>
+                {biblio.location}
+              </option>
+            ))}
+          </select>
           <label htmlFor="bibliothequeId">Bibliothèque</label>
         </div>
       </div>
@@ -315,21 +305,21 @@ const fetchUserId = async (email) => {
 
               <div className="col-md-6">
                 <div className="form-floating">
-                <select
-  className="form-select"
-  id="typeId"
-  name="typeId"
-  value={formData.typeId}
-  onChange={handleChange}
-  required
->
-  <option value="">Sélectionner un type</option>
-  {documentTypeOptions.map(type => (
-    <option key={type.id} value={type.id}>
-      {type.name}
-    </option>
-  ))}
-</select>
+                  <select
+                    className="form-select"
+                    id="typeId"
+                    name="typeId"
+                    value={formData.typeId}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Sélectionner un type</option>
+                    {types.map(type => (
+                      <option key={type.id} value={type.id}>
+                        {type.name}
+                      </option>
+                    ))}
+                  </select>
                   <label htmlFor="typeId">Type de document</label>
                 </div>
               </div>

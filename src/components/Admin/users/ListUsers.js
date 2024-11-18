@@ -182,12 +182,20 @@ return (
                     {error}
                   </div>
                 )}
+                <button
+                          className="btn btn-outline-primary btn-sm"
+                          onClick={() => window.location.href = '/create-user'}     
+                          >
+                          Create User
+                        </button>
+               
+                
                 <div className="table-responsive p-0">
                     <div className="px-3 pb-3">
                       <input
                         type="text"
                         placeholder="Search by name or email"
-                        className="form-control mb-2"
+                        className="form-control mb-2 "
                         value={searchKeyword}
                         onChange={(e) => setSearchKeyword(e.target.value)}
                       />
