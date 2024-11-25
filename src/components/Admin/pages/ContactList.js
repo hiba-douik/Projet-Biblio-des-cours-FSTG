@@ -13,7 +13,7 @@ function ContactList() {
 
   const loadContacts = async () => {
     try {
-      const response = await axios.get('http://localhost:9000/api/contacts'); // Mise à jour du port à 9000
+      const response = await axios.get('http://localhost:9000/api/contacts');
       setContacts(response.data);
     } catch (error) {
       console.error('Error loading contacts:', error);
@@ -79,7 +79,6 @@ function ContactList() {
         </div>
       </div>
 
-      {/* Style CSS dans le composant */}
       <style jsx>{`
         .admin-layout {
           display: flex;
