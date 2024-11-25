@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 
+
 function AdminProtectedRoute() {
   const token = localStorage.getItem('token');
   const adminInfo = JSON.parse(localStorage.getItem('AdminLogin'));
