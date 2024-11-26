@@ -27,7 +27,10 @@ import Logout from './components/Users/auth/Logout';
 import ViewUser from './components/Admin/users/ViewUser';
 import DocumentByUserId from './components/Admin/document/DocumentByUserId';
 import Product from './pages/Product';
-import DocumentDetail from './components/Users/document/DocumentDetail'
+
+import ContactList from './components/Admin/pages/ContactList';
+import DocumentDetail from './pages/DocumentDetail'
+
 
 function App() {
   return (
@@ -64,6 +67,7 @@ function App() {
 
           <Route path="/list_types" element={<Typemanagment />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/contacts" element={<ContactList />} />
         </Route>
       </Routes>
     </Router>
