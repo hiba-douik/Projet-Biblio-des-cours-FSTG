@@ -33,6 +33,7 @@ function Product() {
     } catch (error) {
       console.error('Error fetching documents:', error);
     } finally {
+      console.log("test");
       setIsLoading(false);
     }
   };
