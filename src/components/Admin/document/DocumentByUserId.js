@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faFilePdf  } from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../layouts/NavbarAdmin';
 import SidebarAdmin from '../layouts/SidebarAdmin';
-import DownloadButton from '../../Users/document/DownloadButton';
 
 
 const DocumentByUserId = () => {
@@ -46,6 +45,7 @@ const DocumentByUserId = () => {
           nom: data.nom,   // Assurez-vous que le champ correspond aux données de votre API (nom au lieu de name)
           email: data.email,
           type: data.type,
+          imagePath: data.imagePath,
           image: null,
         });
       })
@@ -108,6 +108,7 @@ const DocumentByUserId = () => {
     id: "USR-001",
     nom: user1.nom,
     email: user1.email,
+    imagePath: user1.imagePath,
     type: "client",
     dateInscription: "2024-01-15"
   };
@@ -133,65 +134,26 @@ const getTypeColor = (type) => {
     return fileName;
   };
   
-  // const handleDownload = async (document) => {
-  //   const token = localStorage.getItem('token'); // Récupérer le token du stockage local
+  const handleDownload = async (document) => {
+    const token = localStorage.getItem('token'); // Récupérer le token du stockage local
   
-  //   if (!document.filePath) return;
+    if (!document.filePath) return;
   
-  //   const filePath = formatFilePath(document.filePath.split('\\').pop());
-  //   const url = `${process.env.REACT_APP_API_URL}/uploads/documents/${filePath}`; // Utilisez le chemin correct pour le fichier
+    const filePath = formatFilePath(document.filePath.split('\\').pop());
+    const url = `${process.env.REACT_APP_API_URL}/uploads/documents/${filePath}`; // Utilisez le chemin correct pour le fichier
   
-  //   console.log("Download URL:", url);
-  //   console.log("Token:", token);
+    console.log("Download URL:", url);
+    console.log("Token:", token);
   
-  //   try {
-  //     // Ouvrir le fichier PDF dans un nouvel onglet directement
-  //     window.open(url);
-  //   } catch (error) {
-  //     console.error("Error opening PDF:", error); // Log l'erreur
-  //     alert('Échec de l\'ouverture du fichier PDF.');
-  //   }
-  // };
+    try {
+      // Ouvrir le fichier PDF dans un nouvel onglet directement
+      window.open(url);
+    } catch (error) {
+      console.error("Error opening PDF:", error); // Log l'erreur
+      alert('Échec de l\'ouverture du fichier PDF.');
+    }
+  };
 
-    const downloadFile = async (e) => {
-      e.preventDefault(); // Empêche le comportement par défaut de l'ancre
-      try {
-        const token = localStorage.getItem("token"); // Récupérer le token
-        if (!token) {
-          alert("Token manquant. Veuillez vous connecter.");
-          return;
-        }
-  
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/document/${documentId}/download`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-  
-        if (!response.ok) {
-          throw new Error("Erreur lors du téléchargement du fichier.");
-        }
-  
-        const blob = await response.blob(); // Convertir la réponse en blob
-        const url = window.URL.createObjectURL(blob); // Créer une URL Blob
-  
-        // Créer un élément <a> temporaire pour déclencher le téléchargement
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `${documentName || "document"}`; // Définir le nom de fichier
-        document.body.appendChild(link);
-        link.click(); // Déclencher le téléchargement
-        link.remove(); // Nettoyage du DOM
-        window.URL.revokeObjectURL(url); // Libérer l'URL Blob
-      } catch (error) {
-        console.error("Erreur :", error);
-        alert("Erreur lors du téléchargement du fichier.");
-      }
-    };
   return (
 <>            <SidebarAdmin />
 
@@ -201,28 +163,27 @@ const getTypeColor = (type) => {
     <div className="container mt-4">
       {/* Profile Card */}
       <div className="card mb-4 shadow">
-        <div className="card-body">
-          <div className="row align-items-center">
-            <div className="col-md-2 text-center">
-              <div 
-                className="rounded-circle d-flex align-items-center justify-content-center mx-auto bg-primary text-white"
-                style={{ width: '80px', height: '80px', fontSize: '2rem' }}
-              >
-                {user.nom}
-              </div>
-            </div>
-            <div className="col-md-10">
-              <h2>{user.nom}</h2>
-              <div className="badge bg-success me-2">{user.type}</div>
-              <p className="text-muted mb-1">{user.email}</p>
-              <small className="text-muted">
-                ID: {user.id} | Membre depuis: {user.nom}
-              </small>
-            </div>
-          </div>
-        </div>
+  <div className="card-body">
+    <div className="row align-items-center">
+      <div className="col-md-2 text-center">
+        <img
+          src={user.imagePath ? `data:image/jpeg;base64,${user.imagePath}` : "images/default-avatar.jpg"} 
+          className="rounded-circle mx-auto d-block"
+          alt={user.nom}
+          style={{ width: '80px', height: '80px', objectFit: 'cover' }}
+        />
       </div>
-
+      <div className="col-md-10">
+        <h2>{user.nom}</h2>
+        <div className="badge bg-success me-2">{user.type}</div>
+        <p className="text-muted mb-1">{user.email}</p>
+        <small className="text-muted">
+          ID: {user.id} | Membre depuis: {user.nom}
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
       {/* Documents Table */}
       <div className="container-fluid py-4 px-4" style={{ backgroundColor: '#f8f9fa' }}>
           {/* Header Section */}
@@ -272,19 +233,16 @@ const getTypeColor = (type) => {
                     <td className="px-4">{document.niveaux}</td>
                     <td className="px-4 text-center">
                       {/* Download PDF Button */}
-                      {/* {document.filePath && (
+                      {document.filePath && (
                         <button
-                          onClick={() => downloadFile(document)} // Pass the document here
+                          onClick={() => handleDownload(document)} // Pass the document here
                           className="btn btn-link text-primary p-2"
                           title="Télécharger le PDF"
                         >
                           <FontAwesomeIcon icon={faFilePdf} size="lg" />
                         </button>
-                      )} */}
-                    <DownloadButton
-                            documentId={document.id}
-                            documentName={`${document.title}.pdf`} // Nom du fichier avec extension
-                          />                      
+                      )}
+                      
                       {/* Delete Button */}
                       <button
                         onClick={() => handleDelete(document)}
