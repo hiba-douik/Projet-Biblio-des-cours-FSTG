@@ -22,7 +22,7 @@ function About() {
       className="header-image img-fluid"
       alt=""
     />
-  </header>
+        </header>
   <section className="team section-padding">
     <div className="container">
       <div className="row">

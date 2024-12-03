@@ -2,87 +2,21 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Footer from '../components/Users/layouts/Footer';
 import Navbar from '../components/Users/layouts/Navbar';
-import { Search } from 'lucide-react';
+import { Search, Clock, Tag, Book, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-const styles = {
-  searchContainer: `
-    max-w-2xl mx-auto mb-8
-  `,
-  searchInput: `
-    w-full px-4 py-3 pl-10 
-    bg-white border border-gray-300 rounded-lg 
-    focus:outline-none focus:ring-2 focus:ring-blue-500
-    transition-all duration-300
-  `,
-  documentCard: `
-    bg-white rounded-lg shadow-sm hover:shadow-md 
-    transition-all duration-200 p-4 h-full
-    transform hover:-translate-y-1
-  `,
-  documentImage: `
-    w-20 h-20 object-cover rounded-full mr-4
-  `,
-  documentInfo: `
-    flex-grow-1
-  `,
-  documentTitle: `
-    text-xl font-semibold mb-2 text-gray-900
-  `,
-  documentDescription: `
-    text-gray-600 text-sm mb-2
-  `,
-  tagContainer: `
-    flex flex-wrap gap-2 mb-3
-  `,
-  tag: `
-    px-3 py-1 text-sm rounded-full
-  `,
-  typeTag: `
-    bg-blue-100 text-blue-800
-  `,
-  filierTag: `
-    bg-green-100 text-green-800
-  `,
-  viewMoreButton: `
-    px-4 py-2 rounded-full bg-blue-600 text-white
-    hover:bg-blue-700 transition-colors duration-200
-    flex items-center gap-2
-  `,
-  paginationContainer: `
-    flex justify-center mt-8
-  `,
-  paginationButton: `
-    px-3 py-1 mx-1 rounded-md 
-    border border-gray-300
-    hover:bg-gray-50
-    focus:outline-none focus:ring-2 focus:ring-blue-500
-  `,
-  activePaginationButton: `
-    bg-blue-600 text-white
-    border-blue-600
-    hover:bg-blue-700
-  `,
-  emptyState: `
-    text-center py-12
-  `,
-  emptyStateTitle: `
-    text-xl font-medium text-gray-900 mb-2
-  `,
-  emptyStateText: `
-    text-gray-500
-  `
-};
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Product() {
   const [documents, setDocuments] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [documentsPerPage] = useState(9);
+  const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
 
   const fetchDocuments = async () => {
+    setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/document/search`, {
@@ -97,119 +31,122 @@ function Product() {
       setDocuments(response.data);
     } catch (error) {
       console.error('Error fetching documents:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchDocuments();
+    const debounceTimer = setTimeout(() => {
+      fetchDocuments();
+    }, 300);
+
+    return () => clearTimeout(debounceTimer);
   }, [searchTerm]);
 
   const indexOfLastDocument = currentPage * documentsPerPage;
   const indexOfFirstDocument = indexOfLastDocument - documentsPerPage;
   const currentDocuments = documents.slice(indexOfFirstDocument, indexOfLastDocument);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
-    <div>
+    <div className="min-vh-100 d-flex flex-column">
       <Navbar />
-      
-      <section className="site-header section-padding">
-        <div className="container">
-          <div className="row">
-            <div className="col-12">
-              <h2 className="mb-5">
-                See our <span>docs</span>
-              </h2>
-              
-              {/* Search Container */}
-              <div className={styles.searchContainer}>
-                <div className="relative">
-                  <input
-                    type="text"
-                    className={styles.searchInput}
-                    placeholder="Rechercher des documents..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                </div>
-              </div>
 
-              {/* Documents Grid */}
-              <div className="row">
-                {currentDocuments.length === 0 ? (
-                  <div className={styles.emptyState}>
-                    <h3 className={styles.emptyStateTitle}>
-                      Aucun document trouvé
-                    </h3>
-                    <p className={styles.emptyStateText}>
-                      Essayez de modifier vos critères de recherche
-                    </p>
-                  </div>
-                ) : (
-                  currentDocuments.map((document) => (
-                    <div className="col-lg-4 col-md-6 mb-4" key={document.id}>
-                      <div className={styles.documentCard}>
-                        <div className="team-thumb d-flex align-items-center">
-                          <img
-                            src="template_user/images/people/senior-man-wearing-white-face-mask-covid-19-campaign-with-design-space.jpeg"
-                            className={styles.documentImage}
-                            alt=""
-                          />
-                          <div className={styles.documentInfo}>
-                            <h5 className={styles.documentTitle}>{document.titre}</h5>
-                            <p className={styles.documentDescription}>{document.description}</p>
-                            
-                            <div className={styles.tagContainer}>
-                              {document.type?.name && (
-                                <span className={`${styles.tag} ${styles.typeTag}`}>
-                                  {document.type.name}
-                                </span>
-                              )}
-                              {document.filier && (
-                                <span className={`${styles.tag} ${styles.filierTag}`}>
-                                  {document.filier}
-                                </span>
-                              )}
-                            </div>
+      {/* Hero Header */}
+      <header className="bg-gradient text-white text-center py-5">
+        <h1 className="display-4">Discover Our <span className="text-primary">Documents</span></h1>
+      </header>
 
-                            <button
-                                onClick={() => navigate(`/document/${document.id}`)}
-                                className={styles.viewMoreButton}
-                              >
-                                <i className="bi-plus-circle-fill" />
-                                Voir plus
-                              </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
+      {/* Search Box */}
+      <div className="container my-4">
+        <div className="input-group">
+          <span className="input-group-text bg-white">
+            <Search className="text-secondary" size={24} />
+          </span>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search for documents..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
 
-              {/* Pagination */}
-              {documents.length > documentsPerPage && (
-                <div className={styles.paginationContainer}>
-                  {Array.from({ length: Math.ceil(documents.length / documentsPerPage) }).map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => paginate(index + 1)}
-                      className={`
-                        ${styles.paginationButton}
-                        ${currentPage === index + 1 ? styles.activePaginationButton : ''}
-                      `}
-                    >
-                      {index + 1}
-                    </button>
-                  ))}
-                </div>
-              )}
+      {/* Main Content */}
+      <main className="container flex-grow-1">
+        {isLoading ? (
+          <div className="d-flex justify-content-center align-items-center py-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
             </div>
           </div>
-        </div>
-      </section>
+        ) : currentDocuments.length === 0 ? (
+          <div className="text-center py-5">
+            <h3>No documents found</h3>
+            <p>Try adjusting your search criteria.</p>
+          </div>
+        ) : (
+          <div className="row g-4">
+            {currentDocuments.map((document) => (
+              <div className="col-md-4" key={document.id}>
+                <div className="card h-100 shadow-sm">
+                  {/* <img
+                    src="template_user/images/people/senior-man-wearing-white-face-mask-covid-19-campaign-with-design-space.jpeg"
+                    className="card-img-top"
+                    alt="Document Thumbnail"
+                  /> */}
+                  <div className="card-body">
+                    <h5 className="card-title">{document.titre}</h5>
+                    <p className="card-text text-truncate">{document.description}</p>
+                    <div className="mb-3">
+                      {document.type?.name && (
+                        <span className="badge bg-primary me-2">
+                          <Book size={16} /> {document.type.name}
+                        </span>
+                      )}
+                      {document.filier && (
+                        <span className="badge bg-secondary">
+                          <Tag size={16} /> {document.filier}
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => navigate(`/document/${document.id}`)}
+                      className="btn btn-primary w-100 d-flex align-items-center justify-content-center"
+                    >
+                      View Details <ChevronRight className="ms-2" size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {documents.length > documentsPerPage && (
+          <nav className="mt-4">
+            <ul className="pagination justify-content-center">
+              {Array.from({ length: Math.ceil(documents.length / documentsPerPage) }).map((_, index) => (
+                <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`} key={index}>
+                  <button
+                    className="page-link"
+                    onClick={() => paginate(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+      </main>
 
       <Footer />
     </div>

@@ -28,6 +28,7 @@ import ViewUser from './components/Admin/users/ViewUser';
 import DocumentByUserId from './components/Admin/document/DocumentByUserId';
 import Product from './pages/Product';
 import DocumentDetail from './components/Users/document/DocumentDetail'
+import ListContact from './components/Admin/contact/ListContact';
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/listusers" element={<ListUsers />} />
+          <Route path="/contacts" element={<ListContact />} />
           <Route path="/create-user" element={<CreateUsers />} />
           <Route path="/edit-user/:userId" element={<EditUser />} />
           <Route path="/view-user/:userId" element={<ViewUser />} />
