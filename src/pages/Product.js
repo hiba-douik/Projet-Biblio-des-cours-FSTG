@@ -18,11 +18,11 @@ function Product() {
   const fetchDocuments = async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/document/search`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      // const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/document/search`, {
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
         params: {
           titre: searchTerm,
           description: searchTerm

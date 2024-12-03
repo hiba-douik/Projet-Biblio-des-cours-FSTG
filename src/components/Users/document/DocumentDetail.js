@@ -6,6 +6,7 @@ import Navbar from '../layouts/Navbar';
 import DownloadButton from './DownloadButton';
 
 const DocumentDetail = () => {
+
   const { id } = useParams();
   const [document, setDocument] = useState(null);
   const [comments, setComments] = useState([]);
@@ -19,7 +20,7 @@ const DocumentDetail = () => {
     try {
       const docResponse = await axios.get(
         `${process.env.REACT_APP_API_URL}/api/auth/document/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        // { headers: { Authorization: `Bearer ${token}` } }
       );
       setDocument(docResponse.data.document);
 
@@ -170,21 +171,26 @@ const DocumentDetail = () => {
           <h5 className="card-title">Commentaires</h5>
 
           {/* Comment Input */}
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              className="form-control"
-              placeholder="Ajouter un commentaire..."
-            />
-            <button
-              className="btn btn-primary"
-              onClick={editingComment ? handleEditComment : handleAddComment}
-            >
-              {editingComment ? 'Modifier' : 'Envoyer'}
-            </button>
-          </div>
+          {token ? (
+            <div className="input-group mb-3">
+              <input
+                type="text"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                className="form-control"
+                placeholder="Ajouter un commentaire..."
+              />
+              <button
+                className="btn btn-primary"
+                onClick={editingComment ? handleEditComment : handleAddComment}
+              >
+                {editingComment ? 'Modifier' : 'Envoyer'}
+              </button>
+            </div>
+          ) : (
+            <p>Connectez-vous pour ajouter un commentaire.</p>
+          )}
+        
 
           {/* Comments List */}
           {comments.length > 0 ? (

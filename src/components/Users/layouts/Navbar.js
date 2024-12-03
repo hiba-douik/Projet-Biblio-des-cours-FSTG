@@ -2,9 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Home from '../../../pages/Home';
 
-const token = localStorage.getItem('token'); // Retrieve token from local storage
 
 function Navbar() {
+  const token = localStorage.getItem('token'); // Retrieve token from local storage
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container">
