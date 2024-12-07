@@ -29,7 +29,6 @@ import DocumentByUserId from './components/Admin/document/DocumentByUserId';
 import Product from './pages/Product';
 
 import ContactList from './components/Admin/pages/ContactList';
-import DocumentDetail from './pages/DocumentDetail'
 
 
 function App() {
@@ -47,7 +46,6 @@ function App() {
         <Route path="/product" element={<Product />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/*" element={<NotFound />} />
-        <Route path="/document/:id" element={<DocumentDetail/>} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
