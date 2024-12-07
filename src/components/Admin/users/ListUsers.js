@@ -150,47 +150,46 @@ const ListUsers = () => {
     });
   };
 
-// Pagination logic
-const indexOfLastUser = currentPage * usersPerPage;
-const indexOfFirstUser = indexOfLastUser - usersPerPage;
-const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  // Pagination logic
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
-const totalPages = Math.ceil(users.length / usersPerPage);
+  const totalPages = Math.ceil(users.length / usersPerPage);
 
-const handlePageChange = (pageNumber) => {
-  setCurrentPage(pageNumber);
-};
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
-return (
-  <>
-    <SidebarAdmin />
-    <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
-      <Navbar />
-      <div className="container-fluid py-4">
-        <div className="row">
-          <div className="col-12">
-            <div className="card my-4">
-              <div className="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                <div className="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                  <h6 className="text-white text-capitalize ps-3">Users List</h6>
-                </div>
-              </div>
-
-              <div className="card-body px-0 pb-2">
-                {error && (
-                  <div className="alert alert-danger mx-3" role="alert">
-                    {error}
+  return (
+    <>
+      <SidebarAdmin />
+      <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+        <Navbar />
+        <div className="container-fluid py-4">
+          <div className="row">
+            <div className="col-12">
+              <div className="card my-4">
+                <div className="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                  <div className="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                    <h6 className="text-white text-capitalize ps-3">Users List</h6>
                   </div>
-                )}
-                <button
-                          className="btn btn-outline-primary btn-sm"
-                          onClick={() => window.location.href = '/create-user'}     
-                          >
-                          Create User
-                        </button>
-               
-                
-                <div className="table-responsive p-0">
+                </div>
+
+                <div className="card-body px-0 pb-2">
+                  {error && (
+                    <div className="alert alert-danger mx-3" role="alert">
+                      {error}
+                    </div>
+                  )}
+                  <button
+                    className="btn btn-outline-primary btn-sm"
+                    onClick={() => window.location.href = '/create-user'}
+                  >
+                    Create User
+                  </button>
+
+                  <div className="table-responsive p-0">
                     <div className="px-3 pb-3">
                       <input
                         type="text"
@@ -229,108 +228,109 @@ return (
                         </button>
                       </div>
                     </div>
-                  <table className="table align-items-center mb-0">
-                    <thead>
-                      <tr>
-                        <th>User</th>
-                        <th>Name</th>
-                        <th className="text-center">Type</th>
-                        <th colSpan="2">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {loading ? (
+                    <table className="table align-items-center mb-0">
+                      <thead>
                         <tr>
-                          <td colSpan="5" className="text-center">
-                            Loading...
-                          </td>
+                          <th>User</th>
+                          <th>Name</th>
+                          <th className="text-center">Type</th>
+                          <th colSpan="2">Actions</th>
                         </tr>
-                      ) : currentUsers.length === 0 ? (
-                        <tr>
-                          <td colSpan="5" className="text-center">
-                            No users found
-                          </td>
-                        </tr>
-                      ) : (
-                        currentUsers.map((user) => (
-                          <tr key={user.id}>
-                            <td>
-                              <div className="d-flex px-2 py-1">
-                                <div>
-                                  <img
-                                    src="images/book1.jpg"
-                                    className="avatar avatar-sm me-3 border-radius-lg"
-                                    alt={user.nom}
-                                  />
-                                </div>
-                                <div className="d-flex flex-column justify-content-center">
-                                  <h6 className="mb-0 text-sm">{user.nom}</h6>
-                                  <p className="text-xs text-secondary mb-0">
-                                    {user.email}
-                                  </p>
-                                </div>
-                              </div>
-                            </td>
-                            <td>{user.nom}</td>
-                            <td className="align-middle text-center">{user.type}</td>
-                            <td>
-                              <button
-                                className="btn btn-link text-secondary"
-                                onClick={() =>
-                                  window.location.href = `/edit-user/${user.id}`
-                                }
-                              >
-                                Edit
-                              </button>
-                            </td>
-                            <td>
-                              <button
-                                className="btn btn-link text-danger"
-                                onClick={() => handleDelete(user.id)}
-                              >
-                                Delete
-                              </button>
-                              <button
-                                  className="text-danger font-weight-bold text-xs btn btn-link"
-                                
-                                  onClick={() => (window.location.href = `/document/user/${user.id}`)}
-                                  >
-                                    view
-                                    </button>
+                      </thead>
+                      <tbody>
+                        {loading ? (
+                          <tr>
+                            <td colSpan="5" className="text-center">
+                              Loading...
                             </td>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                        ) : currentUsers.length === 0 ? (
+                          <tr>
+                            <td colSpan="5" className="text-center">
+                              No users found
+                            </td>
+                          </tr>
+                        ) : (
+                          currentUsers.map((user) => (
+                            <tr key={user.id}>
+                              <td>
+                                <div className="d-flex px-2 py-1">
+                                  <div>
+                                  <img
+  src={user.imagePath ? `data:image/jpeg;base64,${user.imagePath}` : "images/book1.jpg"} 
+  className="avatar avatar-sm me-3 border-radius-lg"
+  alt={user.nom}
+/>
 
-                {/* Pagination */}
-                <div className="d-flex justify-content-center mt-3">
-                  {Array.from({ length: totalPages }, (_, index) => (
-                    <button
-                      key={index}
-                      className={`btn ${
-                        currentPage === index + 1
-                          ? 'btn-primary'
-                          : 'btn-outline-primary'
-                      } mx-1`}
-                      onClick={() => handlePageChange(index + 1)}
-                    >
-                      {index + 1}
-                    </button>
-                    
-                  ))}
+                                  </div>
+                                  <div className="d-flex flex-column justify-content-center">
+                                    <h6 className="mb-0 text-sm">{user.nom}</h6>
+                                    <p className="text-xs text-secondary mb-0">
+                                      {user.email}
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>{user.nom}</td>
+                              <td className="align-middle text-center">{user.type}</td>
+                              <td>
+                                <button
+                                  className="btn btn-link text-secondary"
+                                  onClick={() =>
+                                    window.location.href = `/edit-user/${user.id}`
+                                  }
+                                >
+                                  Edit
+                                </button>
+                              </td>
+                              <td>
+                                <button
+                                  className="btn btn-link text-danger"
+                                  onClick={() => handleDelete(user.id)}
+                                >
+                                  Delete
+                                </button>
+                                <button
+                                  className="text-danger font-weight-bold text-xs btn btn-link"
+                                  onClick={() => (window.location.href = `/document/user/${user.id}`)}
+                                >
+                                  Document
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Pagination */}
+                  <nav className="d-flex justify-content-end">
+                    <ul className="pagination">
+                      {Array.from({ length: totalPages }).map((_, index) => (
+                        <li
+                          key={index}
+                          className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}
+                        >
+                          <button
+                            className="page-link"
+                            onClick={() => handlePageChange(index + 1)}
+                          >
+                            {index + 1}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </nav>
                 </div>
               </div>
             </div>
           </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-    </main>
-  </>
-);
+      </main>
+    </>
+  );
 };
 
 export default ListUsers;

@@ -31,12 +31,12 @@ function Navbar() {
         className="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4"
         id="navbar"
       >
-        <div className="ms-md-auto pe-md-3 d-flex align-items-center">
+        {/* <div className="ms-md-auto pe-md-3 d-flex align-items-center">
           <div className="input-group input-group-outline">
             <label className="form-label">Type here...</label>
             <input type="text" className="form-control" />
           </div>
-        </div>
+        </div> */}
         <ul className="navbar-nav  justify-content-end">
           <li className="nav-item d-flex align-items-center">
             <Link

@@ -45,6 +45,7 @@ const DocumentByUserId = () => {
           nom: data.nom,   // Assurez-vous que le champ correspond aux données de votre API (nom au lieu de name)
           email: data.email,
           type: data.type,
+          imagePath: data.imagePath,
           image: null,
         });
       })
@@ -107,6 +108,7 @@ const DocumentByUserId = () => {
     id: "USR-001",
     nom: user1.nom,
     email: user1.email,
+    imagePath: user1.imagePath,
     type: "client",
     dateInscription: "2024-01-15"
   };
@@ -161,28 +163,27 @@ const getTypeColor = (type) => {
     <div className="container mt-4">
       {/* Profile Card */}
       <div className="card mb-4 shadow">
-        <div className="card-body">
-          <div className="row align-items-center">
-            <div className="col-md-2 text-center">
-              <div 
-                className="rounded-circle d-flex align-items-center justify-content-center mx-auto bg-primary text-white"
-                style={{ width: '80px', height: '80px', fontSize: '2rem' }}
-              >
-                {user.nom}
-              </div>
-            </div>
-            <div className="col-md-10">
-              <h2>{user.nom}</h2>
-              <div className="badge bg-success me-2">{user.type}</div>
-              <p className="text-muted mb-1">{user.email}</p>
-              <small className="text-muted">
-                ID: {user.id} | Membre depuis: {user.nom}
-              </small>
-            </div>
-          </div>
-        </div>
+  <div className="card-body">
+    <div className="row align-items-center">
+      <div className="col-md-2 text-center">
+        <img
+          src={user.imagePath ? `data:image/jpeg;base64,${user.imagePath}` : "images/default-avatar.jpg"} 
+          className="rounded-circle mx-auto d-block"
+          alt={user.nom}
+          style={{ width: '80px', height: '80px', objectFit: 'cover' }}
+        />
       </div>
-
+      <div className="col-md-10">
+        <h2>{user.nom}</h2>
+        <div className="badge bg-success me-2">{user.type}</div>
+        <p className="text-muted mb-1">{user.email}</p>
+        <small className="text-muted">
+          ID: {user.id} | Membre depuis: {user.nom}
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
       {/* Documents Table */}
       <div className="container-fluid py-4 px-4" style={{ backgroundColor: '#f8f9fa' }}>
           {/* Header Section */}

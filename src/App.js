@@ -28,7 +28,11 @@ import ViewUser from './components/Admin/users/ViewUser';
 import DocumentByUserId from './components/Admin/document/DocumentByUserId';
 import Product from './pages/Product';
 
-import ContactList from './components/Admin/pages/ContactList';
+
+// import ContactList from './components/Admin/pages/ContactList';
+
+// import DocumentDetail from './components/Users/document/DocumentDetail'
+import ListContact from './components/Admin/contact/ListContact';
 
 
 function App() {
@@ -51,6 +55,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/listusers" element={<ListUsers />} />
+          <Route path="/contacts" element={<ListContact />} />
           <Route path="/create-user" element={<CreateUsers />} />
           <Route path="/edit-user/:userId" element={<EditUser />} />
           <Route path="/view-user/:userId" element={<ViewUser />} />
@@ -65,7 +70,6 @@ function App() {
 
           <Route path="/list_types" element={<Typemanagment />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/contacts" element={<ContactList />} />
         </Route>
       </Routes>
     </Router>

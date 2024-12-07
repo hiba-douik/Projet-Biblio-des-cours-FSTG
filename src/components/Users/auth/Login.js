@@ -4,6 +4,8 @@ import Footer from '../layouts/Footer';
 import Navbar from '../layouts/Navbar'; 
 
 function Login() {
+    console.log("API URL: ", `${process.env.REACT_APP_API_URL}/api/auth/document/all`);
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -14,6 +16,7 @@ function Login() {
         setErrorMessage('');  // Réinitialise le message d'erreur
       
         try {
+
             const loginResponse = await fetch(`${process.env.REACT_APP_API_URL}`+"/api/auth/login", {
                 method: 'POST',
                 headers: {
