@@ -1,31 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Search, ChevronRight, Filter,  Book, User,ThumbsUp, ThumbsDown } from 'lucide-react';
 import Footer from '../components/Users/layouts/Footer';
 import Navbar from '../components/Users/layouts/Navbar';
-import { Search, Clock, Tag, Book, ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate  } from 'react-router-dom';
 
 function Product() {
   const [documents, setDocuments] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filieres, setFilieres] = useState(["Science", "Technologie", "Lettres", "Économie", "Droit"]);
+  const [niveaux, setNiveaux] = useState(["Licence 1", "Licence 2", "Licence 3", "Master 1", "Master 2", "Doctorat"]);
+  const [selectedFilieres, setSelectedFilieres] = useState([]);
+  const [selectedNiveaux, setSelectedNiveaux] = useState([]);
+  const [bibliotheques, setBibliotheques] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [selectedBibliotheques, setSelectedBibliotheques] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [documentsPerPage] = useState(9);
-  const [isLoading, setIsLoading] = useState(true);
-
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   fetchDocuments();
+  // }, [searchTerm, selectedFilieres, selectedNiveaux]);
 
   const fetchDocuments = async () => {
     setIsLoading(true);
     try {
-      // const token = localStorage.getItem('token');
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/document/search`, {
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
         params: {
           titre: searchTerm,
-          description: searchTerm
+          bibliotheques: selectedBibliotheques.join(','), // Filter by selected bibliothèques
+          types: selectedTypes.join(','),
+          filier: selectedFilieres.join(','),
+          niveaux: selectedNiveaux.join(',')
         }
       });
       setDocuments(response.data);
@@ -36,13 +46,41 @@ function Product() {
     }
   };
 
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      fetchDocuments();
-    }, 300);
+  const toggleFiliere = (filiere) => {
+    setSelectedFilieres((prev) =>
+      prev.includes(filiere) ? prev.filter((f) => f !== filiere) : [...prev, filiere]
+    );
+  };
 
-    return () => clearTimeout(debounceTimer);
-  }, [searchTerm]);
+  const toggleNiveau = (niveau) => {
+    setSelectedNiveaux((prev) =>
+      prev.includes(niveau) ? prev.filter((n) => n !== niveau) : [...prev, niveau]
+    );
+  };
+  // Fetch bibliothèques
+  const fetchBibliotheques = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/bibliotique/all`);
+      setBibliotheques(response.data);
+    } catch (error) {
+      console.error('Error fetching bibliothèques:', error);
+    }
+  };
+
+  // Fetch types
+  const fetchTypes = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/type/all`);
+      setTypes(response.data);
+    } catch (error) {
+      console.error('Error fetching types:', error);
+    }
+  };
+  useEffect(() => {
+    fetchBibliotheques();
+    fetchTypes();
+    fetchDocuments();
+  }, [searchTerm, selectedBibliotheques, selectedTypes, selectedFilieres, selectedNiveaux]);
 
   const indexOfLastDocument = currentPage * documentsPerPage;
   const indexOfFirstDocument = indexOfLastDocument - documentsPerPage;
@@ -53,101 +91,174 @@ function Product() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleCheckboxChange = (e, setFunction, selectedArray) => {
+    const value = e.target.value;
+    const checked = e.target.checked;
+    if (checked) {
+      setFunction([...selectedArray, value]);
+    } else {
+      setFunction(selectedArray.filter((item) => item !== value));
+    }
+  };
+
   return (
     <div className="min-vh-100 d-flex flex-column">
       <Navbar />
+      <div className="container-fluid">
+        <div className="row">
+          {/* Sidebar */}
+          <div className="col-md-3 bg-light p-4">
+            <h5>
+              <Filter size={20} /> Filter Documents
+            </h5>
+            <hr />
+            <div>
+            <h5>Bibliothèques</h5>
+          <ul className="list-unstyled">
+            {bibliotheques.map((bibliotheque) => (
+              <li key={bibliotheque.id}>
+                <label>
+                  <input
+                    type="checkbox"
+                    value={bibliotheque.id}
+                    onChange={(e) =>
+                      handleCheckboxChange(e, setSelectedBibliotheques, selectedBibliotheques)
+                    }
+                  />{' '}
+                  {bibliotheque.nom}
+                </label>
+              </li>
+            ))}
+          </ul>
 
-      {/* Hero Header */}
-      <header className="bg-gradient text-white text-center py-5">
-        <h1 className="display-4">Discover Our <span className="text-primary">Documents</span></h1>
-      </header>
-
-      {/* Search Box */}
-      <div className="container my-4">
-        <div className="input-group">
-          <span className="input-group-text bg-white">
-            <Search className="text-secondary" size={24} />
-          </span>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search for documents..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <main className="container flex-grow-1">
-        {isLoading ? (
-          <div className="d-flex justify-content-center align-items-center py-5">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
+          <h5>Types de Documents</h5>
+          <ul className="list-unstyled">
+            {types.map((type) => (
+              <li key={type.id}>
+                <label>
+                  <input
+                    type="checkbox"
+                    value={type.id}
+                    onChange={(e) => handleCheckboxChange(e, setSelectedTypes, selectedTypes)}
+                  />{' '}
+                  {type.name}
+                </label>
+              </li>
+            ))}
+          </ul>
+              <h6>Filieres</h6>
+              {filieres.map((filiere) => (
+                <div key={filiere} className="form-check">
+                  <input
+                    type="checkbox"
+                    id={`filiere-${filiere}`}
+                    className="form-check-input"
+                    checked={selectedFilieres.includes(filiere)}
+                    onChange={() => toggleFiliere(filiere)}
+                  />
+                  <label className="form-check-label" htmlFor={`filiere-${filiere}`}>
+                    {filiere}
+                  </label>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3">
+              <h6>Niveaux</h6>
+              {niveaux.map((niveau) => (
+                <div key={niveau} className="form-check">
+                  <input
+                    type="checkbox"
+                    id={`niveau-${niveau}`}
+                    className="form-check-input"
+                    checked={selectedNiveaux.includes(niveau)}
+                    onChange={() => toggleNiveau(niveau)}
+                  />
+                  <label className="form-check-label" htmlFor={`niveau-${niveau}`}>
+                    {niveau}
+                  </label>
+                </div>
+              ))}
             </div>
           </div>
-        ) : currentDocuments.length === 0 ? (
-          <div className="text-center py-5">
-            <h3>No documents found</h3>
-            <p>Try adjusting your search criteria.</p>
-          </div>
-        ) : (
-          <div className="row g-4">
-            {currentDocuments.map((document) => (
-              <div className="col-md-4" key={document.id}>
-                <div className="card h-100 shadow-sm">
-                  {/* <img
-                    src="template_user/images/people/senior-man-wearing-white-face-mask-covid-19-campaign-with-design-space.jpeg"
-                    className="card-img-top"
-                    alt="Document Thumbnail"
-                  /> */}
-                  <div className="card-body">
-                    <h5 className="card-title">{document.titre}</h5>
-                    <p className="card-text text-truncate">{document.description}</p>
-                    <div className="mb-3">
-                      {document.type?.name && (
-                        <span className="badge bg-primary me-2">
-                          <Book size={16} /> {document.type.name}
-                        </span>
-                      )}
-                      {document.filier && (
-                        <span className="badge bg-secondary">
-                          <Tag size={16} /> {document.filier}
-                        </span>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => navigate(`/document/${document.id}`)}
-                      className="btn btn-primary w-100 d-flex align-items-center justify-content-center"
-                    >
-                      View Details <ChevronRight className="ms-2" size={18} />
-                    </button>
-                  </div>
+
+          {/* Main Content */}
+          <div className="col-md-9">
+            <div className="my-4">
+              <div className="input-group">
+                <span className="input-group-text bg-white">
+                  <Search className="text-secondary" size={24} />
+                </span>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search for documents..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+            {isLoading ? (
+              <div className="d-flex justify-content-center align-items-center py-5">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
                 </div>
               </div>
-            ))}
+            ) : documents.length === 0 ? (
+              <div className="text-center py-5">
+                <h3>No documents found</h3>
+              </div>
+            ) : (
+              <div className="row g-4">
+                {documents.map((doc) => (
+                  <div className="col-md-4" key={doc.id}>
+                  <div className="card h-100 shadow-sm border-0">
+                    <div className="card-body d-flex flex-column">
+                      {/* Titre du document */}
+                      <h5 className="card-title text-primary fw-bold mb-2">{doc.titre}</h5>
+                      
+                      {/* Nom de la bibliothèque */}
+                      <div className="d-flex align-items-center mb-2">
+                        <Book size={18} className="me-2 text-secondary" />
+                        <span className="text-muted small">{doc.bibliotheque.nom}</span>
+                      </div>
+                      
+                      {/* Nom du créateur */}
+                      <div className="d-flex align-items-center mb-3">
+                        <User size={18} className="me-2 text-secondary" />
+                        <span className="text-muted small">Créé par : {doc.utilisateur.nom}</span>
+                      </div>
+                      <div className="d-flex align-items-center justify-content-between mb-3">
+                      {/* Likes */}
+                      <div className="d-flex align-items-center">
+                        <ThumbsUp size={18} className="me-1 text-success" />
+                        <span className="text-muted small">{doc.likes}</span>
+                      </div>
+                      {/* Dislikes */}
+                      <div className="d-flex align-items-center">
+                        <ThumbsDown size={18} className="me-1 text-danger" />
+                        <span className="text-muted small">{doc.dislike}</span>
+                      </div>
+                    </div>
+            
+                      {/* Description */}
+                      <p className="card-text text-truncate mb-4">{doc.description}</p>
+            
+                      {/* Bouton View Details */}
+                      <button
+                        className="btn btn-primary w-100 mt-auto d-flex align-items-center justify-content-center"
+                        onClick={() => navigate(`/document/${doc.id}`)}
+                      >
+                        Voir les détails <ChevronRight size={18} className="ms-2" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-
-        {/* Pagination */}
-        {documents.length > documentsPerPage && (
-          <nav className="mt-4">
-            <ul className="pagination justify-content-center">
-              {Array.from({ length: Math.ceil(documents.length / documentsPerPage) }).map((_, index) => (
-                <li className={`page-item ${currentPage === index + 1 ? 'active' : ''}`} key={index}>
-                  <button
-                    className="page-link"
-                    onClick={() => paginate(index + 1)}
-                  >
-                    {index + 1}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
-      </main>
-
+        </div>
+      </div>
       <Footer />
     </div>
   );

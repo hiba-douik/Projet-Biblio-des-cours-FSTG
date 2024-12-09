@@ -8,7 +8,7 @@ function CreateUsers() {
     nom: '',
     email: '',
     password: '',
-    type: 'Etudient', // Default to 'Etudient'
+    type: 'User', // Default to 'Etudient'
     image: null, // Add image to state
   });
 
