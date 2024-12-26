@@ -134,30 +134,30 @@ const DocumentDetail = () => {
   
     const context = {
       title: document?.document?.titre || "Unknown Title",
-      description: document.description || "",
+      description: document.description || "Unknown description",
     };
-  
+    console.log(context);
     try {
-      // Example of direct API call using Axios
-      const response = await axios.post('YOUR_GOOGLE_GENERATIVE_AI_API_ENDPOINT', {
+      const client = new GoogleGenerativeAI({ apiKey });
+  
+      const response = await client.generateText({
         model,
-        input: {
+        prompt: {
           text: `Title: ${context.title}\nDescription: ${context.description}\nQuestion: ${userMessage}`,
         },
-        // Include any additional parameters needed for the request
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
+        parameters: {
+          temperature: 0.7,
+          maxOutputTokens: 100,
         },
       });
+      console.log(response);
   
-      const aiResponse = response.data?.results?.[0]?.output || "Je ne peux pas répondre pour le moment.";
+      const aiResponse = response?.candidates?.[0]?.output || "Je ne peux pas répondre pour le moment.";
       const aiMessage = { sender: "ai", text: aiResponse };
   
       setChatMessages((prev) => [...prev, aiMessage]);
   
-      // Calculate used tokens if applicable, adjust as needed based on API response
-      const usedTokens = response.data?.usage?.totalTokens || 0;
+      const usedTokens = response?.usage?.totalTokens || 0;
       setTokenCount((prev) => Math.max(0, prev - usedTokens));
     } catch (error) {
       console.error("Error communicating with Google Generative AI:", error);

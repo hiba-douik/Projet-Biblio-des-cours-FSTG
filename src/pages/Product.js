@@ -216,7 +216,7 @@ function Product() {
             
                       {/* User image or default icon in the top-left corner */}
                         <img
-                        src={doc.utilisateur.imagePath ? `data:image/jpeg;base64,${user.imagePath}` : "images/book1.jpg"}                          alt={`${doc.utilisateur.nom}'s profile`}
+                        src={doc.utilisateur.imagePath ? `data:image/jpeg;base64,${doc.utilisateur.imagePath}` : "images/book1.jpg"}                          alt={`${doc.utilisateur.nom}'s profile`}
                           className="position-absolute top-0 start-0 rounded-circle m-2"
                           style={{ width: '40px', height: '40px', objectFit: 'cover' }}
                           onClick={() => (window.location.href = `/user/${doc.utilisateur.id}`)}
@@ -257,7 +257,7 @@ function Product() {
             
                       {/* Description */}
                       <p className="card-text text-truncate mb-4">
-                      {doc.description.length > 25 ? doc.description.slice(0, 25) + '...' : doc.description}
+                      {doc.description.length > 15 ? doc.description.slice(0, 15) + '...' : doc.description}
                     </p>            
                       {/* Bouton View Details */}
                       <button

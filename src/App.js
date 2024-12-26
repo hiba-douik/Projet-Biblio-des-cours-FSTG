@@ -30,6 +30,7 @@ import Product from './pages/Product';
 import DocumentDetail from './components/Users/document/DocumentDetail'
 import DocumentByUserIdForClient from './components/Users/document/DocumentByUserIdForClient'
 import ListContact from './components/Admin/contact/ListContact';
+import EditProfile from './components/Users/auth/EditProfile';
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
+        <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/document/:id" element={<DocumentDetail/>} />
         <Route path="/user/:userId" element={<DocumentByUserIdForClient />} />
           <Route path="/dashboard" element={<Dashboard />} />

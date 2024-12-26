@@ -162,6 +162,10 @@ const getTypeColor = (type) => {
     </div>
   </div>
 </div>
+<Link to="/edit-profile" className="btn btn-outline-primary">
+  Edit Profile
+</Link>
+
 
 
       {/* Documents Table */}
