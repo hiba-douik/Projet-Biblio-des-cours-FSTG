@@ -36,7 +36,8 @@ function FAQs() {
                   aria-expanded="true"
                   aria-controls="accordionGeneralOne"
                 >
-                  What is this Little Fashion?
+                  Quel est l'objectif de la bibliothèque ?
+
                 </button>
               </h2>
               <div
@@ -47,13 +48,10 @@ function FAQs() {
               >
                 <div className="accordion-body">
                   <p className="large-paragraph">
-                    <strong>Little Fashion</strong> is free Bootstrap 5 website
-                    template for everyone. There are 8 HTML pages included in
-                    this template and you can expand more pages as you need.
+                  favoriser l'accès et la recherche dans leurs collections. promouvoir la pratique de la lecture et la recherche documentaire dans l'enseignement, et mener des actions de formation des utilisateurs. 
                   </p>
                   <p className="large-paragraph">
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                    laboris nisi ut aliquip ex ea commodo consequat.
+                  affirmer leur fonction culturelle et leur rôle patrimonial.
                   </p>
                 </div>
               </div>
@@ -68,8 +66,7 @@ function FAQs() {
                   aria-expanded="false"
                   aria-controls="accordionGeneralTwo"
                 >
-                  What is Tooplate website?
-                </button>
+Quelle est la mission d'une bibliothèque ?                </button>
               </h2>
               <div
                 id="accordionGeneralTwo"
@@ -79,16 +76,7 @@ function FAQs() {
               >
                 <div className="accordion-body">
                   <p className="large-paragraph">
-                    <a
-                      href="https://www.tooplate.com/free-templates"
-                      target="_blank"
-                    >
-                      Tooplate
-                    </a>{" "}
-                    is a great website to download free HTML website templates
-                    for your business or personal use. Tooplate website has been
-                    online for almost 8 years now. Thank you for visiting our
-                    website.
+                  La bibliothèque constitue en effet un lieu favorable à la sensibilisation et à la formation au numérique des publics les plus divers, par la diffusion d'un socle commun de connaissances numériques susceptibles de faciliter la vie personnelle et professionnelle de chacun.
                   </p>
                 </div>
               </div>
@@ -103,8 +91,7 @@ function FAQs() {
                   aria-expanded="false"
                   aria-controls="accordionGeneralThree"
                 >
-                  How do I support your website?
-                </button>
+Quelles sont les fonctions de la bibliothèque ?                </button>
               </h2>
               <div
                 id="accordionGeneralThree"
@@ -114,15 +101,14 @@ function FAQs() {
               >
                 <div className="accordion-body">
                   <p className="large-paragraph">
-                    You can support our Tooplate website by sharing it to your
-                    friends or colleagues on the web or social media.
+                  Aujourd'hui les bibliothèques, médiathèques municipales et ne se limitent plus à leurs fonctions de prêts de livres et de lieux d'étude, mais sont devenues, pour répondre aux nouvelles pratiques de leurs usagers, des espaces de loisir, d'animation culturelle et de partages de savoirs.
                   </p>
                 </div>
               </div>
             </div>
           </div>
           <h2 className="mt-5">
-            About <span>our products</span>
+            About <span>READ ME</span>
           </h2>
           <div className="accordion" id="accordionProduct">
             <div className="accordion-item">
@@ -135,7 +121,7 @@ function FAQs() {
                   aria-expanded="true"
                   aria-controls="accordionProductOne"
                 >
-                  What is Fashion Design?
+                  Comment appelle-t-on les rayons d'une bibliothèque ?
                 </button>
               </h2>
               <div
@@ -146,16 +132,9 @@ function FAQs() {
               >
                 <div className="accordion-body">
                   <p className="large-paragraph">
-                    <strong>Lorem ipsum dolor</strong> sit amet, consectetur
-                    adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Quis ipsum suspendisse ultrices
-                    gravida. Risus commodo viverra maecenas accumsan lacus vel
-                    facilisis.
+                  Vous vous demandez s'il on parle de rayons, d'étagères ou de rayonnages en ce qui concerne les livres présentés dans une bibliothèque municipale. Rangée de rayonnages. Ensemble de rayons.
                   </p>
-                  <p className="large-paragraph">
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                    laboris nisi ut aliquip ex ea commodo consequat.
-                  </p>
+                  
                 </div>
               </div>
             </div>
@@ -169,7 +148,7 @@ function FAQs() {
                   aria-expanded="false"
                   aria-controls="accordionProductTwo"
                 >
-                  How do I use the product?
+                  Qui est le père de la bibliothèque ?
                 </button>
               </h2>
               <div
@@ -180,9 +159,7 @@ function FAQs() {
               >
                 <div className="accordion-body">
                   <p className="large-paragraph">
-                    Lorem ipsum is placeholder text commonly used in the
-                    graphic, print, and publishing industries for previewing
-                    layouts and visual mockups.
+                  Ptolémée Ier , fondateur de la bibliothèque. En Grèce antique, il n'y a pas de trace de bibliothèque publique avant la création de la bibliothèque d'Alexandrie.
                   </p>
                 </div>
               </div>

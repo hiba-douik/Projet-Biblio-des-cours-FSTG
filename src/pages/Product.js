@@ -209,40 +209,56 @@ function Product() {
               </div>
             ) : (
               <div className="row g-4">
-                {documents.map((doc) => (
-                  <div className="col-md-4" key={doc.id}>
+              {documents.map((doc) => (
+                <div className="col-md-4" key={doc.id}>
                   <div className="card h-100 shadow-sm border-0">
-                    <div className="card-body d-flex flex-column">
+                    <div className="card-body d-flex flex-column position-relative">
+            
+                      {/* User image or default icon in the top-left corner */}
+                        <img
+                        src={doc.utilisateur.imagePath ? `data:image/jpeg;base64,${user.imagePath}` : "images/book1.jpg"}                          alt={`${doc.utilisateur.nom}'s profile`}
+                          className="position-absolute top-0 start-0 rounded-circle m-2"
+                          style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                          onClick={() => (window.location.href = `/user/${doc.utilisateur.id}`)}
+                        />
+                     
+            
                       {/* Titre du document */}
-                      <h5 className="card-title text-primary fw-bold mb-2">{doc.titre}</h5>
-                      
+                      <div className="d-flex align-items-center mb-2">
+                        <Book size={18} className="text-primary me-2" />
+                        <h5 className="card-title text-primary fw-bold mb-0">{doc.titre}</h5>
+                      </div>
+                      {/* Nom du créateur */}
+                      <div className="d-flex align-items-center mb-3" onClick={() => (window.location.href = `/user/${doc.utilisateur.id}`)}>
+                        <User size={18} className="me-2 text-secondary" />
+                        <span className="text-muted small">Créé par : {doc.utilisateur.nom}</span>
+                      </div>
                       {/* Nom de la bibliothèque */}
                       <div className="d-flex align-items-center mb-2">
                         <Book size={18} className="me-2 text-secondary" />
                         <span className="text-muted small">{doc.bibliotheque.nom}</span>
                       </div>
+            
                       
-                      {/* Nom du créateur */}
-                      <div className="d-flex align-items-center mb-3">
-                        <User size={18} className="me-2 text-secondary" />
-                        <span className="text-muted small">Créé par : {doc.utilisateur.nom}</span>
-                      </div>
+            
                       <div className="d-flex align-items-center justify-content-between mb-3">
-                      {/* Likes */}
-                      <div className="d-flex align-items-center">
-                        <ThumbsUp size={18} className="me-1 text-success" />
-                        <span className="text-muted small">{doc.likes}</span>
+                        {/* Likes */}
+                        <div className="d-flex align-items-center">
+                          <ThumbsUp size={18} className="me-2 text-success" />
+                          <span className="text-muted small">{doc.likes}</span>
+                        </div>
+            
+                        {/* Dislikes */}
+                        <div className="d-flex align-items-center">
+                          <ThumbsDown size={18} className="me-2 text-danger" />
+                          <span className="text-muted small">{doc.dislike}</span>
+                        </div>
                       </div>
-                      {/* Dislikes */}
-                      <div className="d-flex align-items-center">
-                        <ThumbsDown size={18} className="me-1 text-danger" />
-                        <span className="text-muted small">{doc.dislike}</span>
-                      </div>
-                    </div>
             
                       {/* Description */}
-                      <p className="card-text text-truncate mb-4">{doc.description}</p>
-            
+                      <p className="card-text text-truncate mb-4">
+                      {doc.description.length > 25 ? doc.description.slice(0, 25) + '...' : doc.description}
+                    </p>            
                       {/* Bouton View Details */}
                       <button
                         className="btn btn-primary w-100 mt-auto d-flex align-items-center justify-content-center"
@@ -253,8 +269,9 @@ function Product() {
                     </div>
                   </div>
                 </div>
-                ))}
-              </div>
+              ))}
+            </div>
+            
             )}
           </div>
         </div>

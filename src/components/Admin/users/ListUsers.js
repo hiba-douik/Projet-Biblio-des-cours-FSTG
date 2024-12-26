@@ -257,10 +257,10 @@ const ListUsers = () => {
                                 <div className="d-flex px-2 py-1">
                                   <div>
                                   <img
-  src={user.imagePath ? `data:image/jpeg;base64,${user.imagePath}` : "images/book1.jpg"} 
-  className="avatar avatar-sm me-3 border-radius-lg"
-  alt={user.nom}
-/>
+                                    src={user.imagePath ? `data:image/jpeg;base64,${user.imagePath}` : "images/book1.jpg"} 
+                                    className="avatar avatar-sm me-3 border-radius-lg"
+                                    alt={user.nom}
+                                  />
 
                                   </div>
                                   <div className="d-flex flex-column justify-content-center">

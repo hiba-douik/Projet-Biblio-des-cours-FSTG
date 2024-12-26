@@ -1,22 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Home from '../../../pages/Home';
-
 
 function Navbar() {
-  const token = localStorage.getItem('token'); // Retrieve token from local storage
+  const token = localStorage.getItem('token');
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container">
-        {/* Navbar Brand */}
-        <Link className="navbar-brand" to={Home}>
+        <Link className="navbar-brand" to="/">
           <strong>
-            <img style={{ maxWidth: 130 }} src="logo.png" className="img-fluid" alt="Logo" />
+            <img
+              style={{ maxWidth: 130 }}
+              src="logo.png"
+              className="img-fluid"
+              alt="Logo"
+            />
           </strong>
         </Link>
-
-        {/* Navbar Toggler (Mobile) */}
         <button
           className="navbar-toggler"
           type="button"
@@ -28,13 +28,10 @@ function Navbar() {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-
-        {/* Navbar Collapse */}
         <div className="collapse navbar-collapse" id="navbarNav">
-          {/* Navbar Links */}
           <ul className="navbar-nav mx-auto">
             <li className="nav-item">
-              <Link className="nav-link active" to="/">
+              <Link className="nav-link active" aria-current="page" to="/">
                 Home
               </Link>
             </li>
@@ -59,12 +56,13 @@ function Navbar() {
               </Link>
             </li>
           </ul>
-
-          {/* User Options */}
           <div className="d-flex">
             {token ? (
               <>
-                <Link to="/profile" className="btn btn-outline-primary btn-sm me-2">
+                <Link
+                  to="/profile"
+                  className="btn btn-outline-primary btn-sm me-2"
+                >
                   Profile
                 </Link>
                 <Link to="/logout" className="btn btn-outline-info btn-sm">

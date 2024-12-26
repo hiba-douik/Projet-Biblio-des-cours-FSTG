@@ -34,7 +34,7 @@ function About() {
         <div className="col-lg-4 mb-4 col-12">
           <div className="team-thumb d-flex align-items-center">
             <img
-              src="template_user/images/people/senior-man-wearing-white-face-mask-covid-19-campaign-with-design-space.jpeg"
+              src="images/persone/kaabouch.jpeg"
               className="img-fluid custom-circle-image team-image me-4"
               alt=""
             />
@@ -48,7 +48,7 @@ function About() {
         <div className="col-lg-4 mb-4 col-12">
           <div className="team-thumb d-flex align-items-center">
             <img
-              src="template_user/images/people/portrait-british-woman.jpeg"
+              src="images/persone/ait lhaj.jpeg"
               className="img-fluid custom-circle-image team-image me-4"
               alt=""
             />
@@ -62,7 +62,7 @@ function About() {
         <div className="col-lg-4 mb-lg-0 mb-4 col-12">
           <div className="team-thumb d-flex align-items-center">
             <img
-              src="template_user/images/people/beautiful-woman-face-portrait-brown-background.jpeg"
+              src="images/persone/hiba.jpeg"
               className="img-fluid custom-circle-image team-image me-4"
               alt=""
             />

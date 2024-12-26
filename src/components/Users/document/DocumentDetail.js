@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { ThumbsUp, ThumbsDown } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Send  } from "lucide-react";
 import Navbar from '../layouts/Navbar';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const DocumentDetail = () => {
   const { id } = useParams();
@@ -14,6 +15,14 @@ const DocumentDetail = () => {
   const [likes, setLikes] = useState();
   const [dislikes, setDislikes] = useState();
   const token = localStorage.getItem('token');
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [userMessage, setUserMessage] = useState("");
+  const [tokenCount, setTokenCount] = useState(100); // Token limit
+  const apiKey = `${process.env.gemini}` // Replace with your Google Generative AI key
+  const model = "models/text-bison-001"; // Replace with the correct model ID
+
+
 
   // Fetch document metadata
   const fetchDocumentMetadata = async () => {
@@ -25,7 +34,7 @@ const DocumentDetail = () => {
       setDocument(response.data);
       const commentsResponse = await axios.get(
         `${process.env.REACT_APP_API_URL}/api/auth/commentaire/document/${id}`,
-        // { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setComments(commentsResponse.data);
     } catch (error) {
@@ -115,6 +124,51 @@ const DocumentDetail = () => {
     } catch (error) {
       console.error('Error editing comment:', error);
     }
+  };
+
+  const handleChatSubmit = async () => {
+    if (!userMessage.trim() || tokenCount <= 0) return;
+  
+    const newMessage = { sender: "user", text: userMessage };
+    setChatMessages((prev) => [...prev, newMessage]);
+  
+    const context = {
+      title: document?.document?.titre || "Unknown Title",
+      description: document.description || "",
+    };
+  
+    try {
+      // Example of direct API call using Axios
+      const response = await axios.post('YOUR_GOOGLE_GENERATIVE_AI_API_ENDPOINT', {
+        model,
+        input: {
+          text: `Title: ${context.title}\nDescription: ${context.description}\nQuestion: ${userMessage}`,
+        },
+        // Include any additional parameters needed for the request
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      const aiResponse = response.data?.results?.[0]?.output || "Je ne peux pas répondre pour le moment.";
+      const aiMessage = { sender: "ai", text: aiResponse };
+  
+      setChatMessages((prev) => [...prev, aiMessage]);
+  
+      // Calculate used tokens if applicable, adjust as needed based on API response
+      const usedTokens = response.data?.usage?.totalTokens || 0;
+      setTokenCount((prev) => Math.max(0, prev - usedTokens));
+    } catch (error) {
+      console.error("Error communicating with Google Generative AI:", error);
+      const errorMessage = {
+        sender: "ai",
+        text: "Une erreur s'est produite. Veuillez réessayer plus tard.",
+      };
+      setChatMessages((prev) => [...prev, errorMessage]);
+    }
+  
+    setUserMessage("");
   };
 
   const handleDeleteComment = async (commentId) => {
@@ -242,6 +296,100 @@ const DocumentDetail = () => {
           )}
         </div>
       </div>
+      <div
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          zIndex: 1000,
+        }}
+      >
+        <button
+          className="btn btn-primary rounded-circle"
+          style={{ width: "60px", height: "60px" }}
+          onClick={() => setChatOpen(!chatOpen)}
+        >
+          💬
+        </button>
+      </div>
+      {chatOpen && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "80px",
+            right: "20px",
+            width: "300px",
+            height: "400px",
+            backgroundColor: "white",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            borderRadius: "8px",
+            zIndex: 1000,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div
+            style={{
+              padding: "10px",
+              backgroundColor: "#007bff",
+              color: "white",
+              borderTopLeftRadius: "8px",
+              borderTopRightRadius: "8px",
+              textAlign: "center",
+            }}
+          >
+            Chat avec Gemini
+          </div>
+          <div
+            style={{
+              flex: 1,
+              padding: "10px",
+              overflowY: "auto",
+            }}
+          >
+            {chatMessages.map((message, index) => (
+              <div
+                key={index}
+                style={{
+                  marginBottom: "10px",
+                  textAlign: message.sender === "user" ? "right" : "left",
+                }}
+              >
+                <div
+                  style={{
+                    display: "inline-block",
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    backgroundColor: message.sender === "user" ? "#007bff" : "#f1f1f1",
+                    color: message.sender === "user" ? "white" : "black",
+                  }}
+                >
+                  {message.text}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div
+            style={{
+              padding: "10px",
+              borderTop: "1px solid #ccc",
+            }}
+          >
+            <div className="input-group">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Posez votre question..."
+                value={userMessage}
+                onChange={(e) => setUserMessage(e.target.value)}
+              />
+              <button className="btn btn-primary" onClick={handleChatSubmit}>
+                <Send size={20} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
     </>
   );

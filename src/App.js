@@ -28,6 +28,7 @@ import ViewUser from './components/Admin/users/ViewUser';
 import DocumentByUserId from './components/Admin/document/DocumentByUserId';
 import Product from './pages/Product';
 import DocumentDetail from './components/Users/document/DocumentDetail'
+import DocumentByUserIdForClient from './components/Users/document/DocumentByUserIdForClient'
 import ListContact from './components/Admin/contact/ListContact';
 
 function App() {
@@ -45,10 +46,11 @@ function App() {
         <Route path="/product" element={<Product />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/*" element={<NotFound />} />
-        <Route path="/document/:id" element={<DocumentDetail/>} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
+        <Route path="/document/:id" element={<DocumentDetail/>} />
+        <Route path="/user/:userId" element={<DocumentByUserIdForClient />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/listusers" element={<ListUsers />} />
           <Route path="/contacts" element={<ListContact />} />
