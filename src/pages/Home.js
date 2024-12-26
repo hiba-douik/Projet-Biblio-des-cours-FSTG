@@ -1,6 +1,7 @@
 import React from 'react'
 import Footer from '../components/Users/layouts/Footer'
 import Navbar from '../components/Users/layouts/Navbar'
+import { Link } from 'react-router-dom'
 
 function Home() {
   return (
@@ -72,7 +73,7 @@ function Home() {
                   Tooplate is one of the best HTML CSS template websites for
                   everyone.
                 </p>
-                <a href="contact.html" className="btn custom-btn">
+                <a className="btn custom-btn">
                   Work with us
                 </a>
               </div>
@@ -197,7 +198,7 @@ function Home() {
                       </p>
                       <p>complete tasks, and enhance their learning experience in one place.</p>
                       <div className="mt-2 mt-lg-auto">
-                        <a href="contact.html" className="custom-link mb-2">
+                        <a  className="custom-link mb-2">
                           Work with us
                           <i className="bi-arrow-right ms-2" />
                         </a>
@@ -265,7 +266,7 @@ function Home() {
                         </div>
                       </div>
                       <div className="mt-2 mt-lg-auto">
-                        <a href="library-catalog.html" className="custom-link mb-2">
+                        <a  className="custom-link mb-2">
                           Explore Our Collection
                           <i className="bi-arrow-right ms-2" />
                         </a>
@@ -298,7 +299,7 @@ function Home() {
   <p className="lead mb-4">
     We extend our thanks to various online repositories and academic resources for the materials available in our library collection, enhancing the learning experience for our users.
   </p>
-  <a href="library-resources.html" className="custom-link">
+  <a  className="custom-link">
     Explore Library Resources
     <i className="bi-arrow-right ms-2" />
   </a>
@@ -317,7 +318,7 @@ function Home() {
           
           <div className="col-lg-4 col-12 mb-3">
             <div className="product-thumb">
-              <a href="product-detail.html">
+              <a >
                 <img
                   src="images/book1.jpg"
                   className="img-fluid product-image"
@@ -332,7 +333,7 @@ function Home() {
                 <div>
                   <h5 className="product-title mb-0">
                     <a
-                      href="product-detail.html"
+                      
                       className="product-title-link"
                     >
                       full content of a subject or module,
@@ -342,14 +343,14 @@ function Home() {
                   including lessons, lectures, and reading materials. It serves as a comprehensive guide for students throughout the course                  </p>
                 </div>
                 <small className="product-price text-muted ms-auto mt-auto mb-5">
-                  $25
+              
                 </small>
               </div>
             </div>
           </div>
           <div className="col-lg-4 col-12 mb-3">
             <div className="product-thumb">
-              <a href="product-detail.html">
+              <a >
                 <img
                   src="images/book1.jpg"
                   className="img-fluid product-image"
@@ -364,7 +365,6 @@ function Home() {
                 <div>
                   <h5 className="product-title mb-0">
                     <a
-                      href="product-detail.html"
                       className="product-title-link"
                     >
                       A file that includes hands-on exercises, lab reports, and projects
@@ -373,14 +373,14 @@ function Home() {
                   <p className="product-p">help students apply theoretical knowledge in real-world scenarios. It emphasizes problem-solving and</p>
                 </div>
                 <small className="product-price text-muted ms-auto mt-auto mb-5">
-                  $35
+                
                 </small>
               </div>
             </div>
           </div>
           <div className="col-lg-4 col-12 mb-3">
             <div className="product-thumb">
-              <a href="product-detail.html">
+              <a >
                 <img
                   src="images/book1.jpg"
                   className="img-fluid product-image"
@@ -395,7 +395,7 @@ function Home() {
                 <div>
                   <h5 className="product-title mb-0">
                     <a
-                      href="product-detail.html"
+                     
                       className="product-title-link"
                     >
                       summary document that provides an overview of the key point
@@ -404,17 +404,18 @@ function Home() {
                   <p className="product-p">summary document that provides an overview of the key point</p>
                 </div>
                 <small className="product-price text-muted ms-auto mt-auto mb-5">
-                  $35
+                  
                 </small>
               </div>
             </div>
           </div>
         
           <div className="col-12 text-center">
-            <a href="products.html" className="view-all">
-              View All Products
-            </a>
+          <Link to="/product" className="view-all">
+             View All Products
+          </Link>
           </div>
+         
         </div>
       </div>
     </section>
