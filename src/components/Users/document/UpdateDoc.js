@@ -50,7 +50,7 @@ const UpdateDoc = () => {
 
   const fetchDocument = async (token) => {
     const response = await fetch(
-      `${process.env.REACT_APP_API_URL}/api/auth/document/${documentId}`,
+      `${process.env.REACT_APP_API_URL}/api/auth/document/${documentId}/metadata`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

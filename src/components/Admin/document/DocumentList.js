@@ -54,7 +54,7 @@ const DocumentList = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/document/${id}`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/document/${id}/metadata`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -74,7 +74,7 @@ const DocumentList = () => {
   const deleteDocument = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/document/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/document/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -87,7 +87,7 @@ const DocumentList = () => {
   };
 
   // Enhanced download document function
-  const downloadDocument = async (id, filename, fileType) => {
+  const downloadDocument = async (id, title) => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
@@ -95,38 +95,45 @@ const DocumentList = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        responseType: 'blob',
+        responseType: 'blob', // Expecting a binary response
       });
-
+  
       // Validate response
       if (!response.data) {
         throw new Error('No document data received');
       }
-
-      // Determine file extension and MIME type
-      const extension = fileType || filename.split('.').pop() || 'pdf';
-      const mimeType = response.headers['content-type'] || `application/${extension}`;
-      const fullFilename = `${filename}.${extension}`;
-
+  
+      // Extract filename and content type from response headers
+      const contentDisposition = response.headers['content-disposition'];
+      const mimeType = response.headers['content-type'] || 'application/pdf';
+      let filename = title + '.pdf'; // Default filename if not provided in headers
+  
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (match && match[1]) {
+          filename = match[1];
+        }
+      }
+  
       // Create blob and trigger download
       const blob = new Blob([response.data], { type: mimeType });
       const url = window.URL.createObjectURL(blob);
       
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', fullFilename);
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
-
+  
       // Cleanup
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
-
+  
       setError(null);
     } catch (error) {
       console.error('Detailed download error:', error);
       
-      // Detailed error logging
+      // Handle different error scenarios
       if (error.response) {
         console.error('Server response error:', error.response.data);
         console.error('Status code:', error.response.status);
@@ -138,12 +145,13 @@ const DocumentList = () => {
         console.error('Request setup error:', error.message);
         setError(`Download failed: ${error.message}`);
       }
-
+  
       alert(`Download Error: ${error.message}. Please check your connection and try again.`);
     } finally {
       setLoading(false);
     }
   };
+  
 
   // Fetch documents on component mount
   useEffect(() => {

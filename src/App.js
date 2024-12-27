@@ -27,13 +27,11 @@ import Logout from './components/Users/auth/Logout';
 import ViewUser from './components/Admin/users/ViewUser';
 import DocumentByUserId from './components/Admin/document/DocumentByUserId';
 import Product from './pages/Product';
-
-
-// import ContactList from './components/Admin/pages/ContactList';
-
-// import DocumentDetail from './components/Users/document/DocumentDetail'
+import DocumentDetail from './components/Users/document/DocumentDetail'
+import DocumentByUserIdForClient from './components/Users/document/DocumentByUserIdForClient'
 import ListContact from './components/Admin/contact/ListContact';
-
+import EditProfile from './components/Users/auth/EditProfile';
+import ListUsersForClient from './components/Users/auth/ListUsersForClient';
 
 function App() {
   return (
@@ -53,6 +51,10 @@ function App() {
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
+        <Route path="/users-plateform" element={<ListUsersForClient />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/document/:id" element={<DocumentDetail/>} />
+        <Route path="/user/:userId" element={<DocumentByUserIdForClient />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/listusers" element={<ListUsers />} />
           <Route path="/contacts" element={<ListContact />} />

@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import SidebarAdmin from '../layouts/SidebarAdmin';
-import Navbar from '../layouts/NavbarAdmin';
-import Footer from '../layouts/FooterAdmin';
+import Navbar from '../layouts/Navbar';
 import Swal from 'sweetalert2';
-import { Link } from 'lucide-react';
 
-const API_BASE_URL = `${process.env.REACT_APP_API_URL}` + '';
+const API_BASE_URL = `${process.env.REACT_APP_API_URL}`;
 
-const ListUsers = () => {
+const ListUsersForClient = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -32,7 +29,8 @@ const ListUsers = () => {
         throw new Error('Failed to fetch users');
       }
       const data = await response.json();
-      setUsers(data);
+      // Filter out admin users
+      setUsers(data.filter(user => user.type !== 'Admin'));
     } catch (err) {
       setError('Error loading users');
       console.error('Error:', err);
@@ -56,7 +54,8 @@ const ListUsers = () => {
         throw new Error('Failed to search users');
       }
       const data = await response.json();
-      setUsers(data);
+      // Filter out admin users
+      setUsers(data.filter(user => user.type !== 'Admin'));
     } catch (err) {
       setError('Error searching users');
       console.error('Error:', err);
@@ -78,7 +77,8 @@ const ListUsers = () => {
         throw new Error('Failed to filter users');
       }
       const data = await response.json();
-      setUsers(data);
+      // Filter out admin users
+      setUsers(data.filter(user => user.type !== 'Admin'));
     } catch (err) {
       setError('Error filtering users');
       console.error('Error:', err);
@@ -100,54 +100,12 @@ const ListUsers = () => {
         throw new Error('Failed to search and filter users');
       }
       const data = await response.json();
-      setUsers(data);
+      // Filter out admin users
+      setUsers(data.filter(user => user.type !== 'Admin'));
     } catch (err) {
       setError('Error searching and filtering users');
       console.error('Error:', err);
     }
-  };
-
-  const handleDelete = async (userId) => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to delete this user?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await fetch(
-            `${API_BASE_URL}/api/admin/user/delete/${userId}`,
-            {
-              method: 'DELETE',
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-
-          if (!response.ok) {
-            throw new Error('Failed to delete user');
-          }
-
-          setUsers(users.filter((user) => user.id !== userId));
-          Swal.fire(
-            'Deleted!',
-            'User has been deleted successfully.',
-            'success'
-          );
-        } catch (err) {
-          setError('Error deleting user');
-          console.error('Error:', err);
-          Swal.fire('Error!', 'Failed to delete the user.', 'error');
-        }
-      }
-    });
   };
 
   // Pagination logic
@@ -163,7 +121,6 @@ const ListUsers = () => {
 
   return (
     <>
-      <SidebarAdmin />
       <main className="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
         <Navbar />
         <div className="container-fluid py-4">
@@ -182,12 +139,7 @@ const ListUsers = () => {
                       {error}
                     </div>
                   )}
-                  <button
-                    className="btn btn-outline-primary btn-sm"
-                    onClick={() => window.location.href = '/create-user'}
-                  >
-                    Create User
-                  </button>
+              
 
                   <div className="table-responsive p-0">
                     <div className="px-3 pb-3">
@@ -204,7 +156,6 @@ const ListUsers = () => {
                         onChange={(e) => setFilterType(e.target.value)}
                       >
                         <option value="">Select Type</option>
-                        <option value="admin">Admin</option>
                         <option value="User">User</option>
                       </select>
                       <div className="d-flex gap-2">
@@ -232,9 +183,6 @@ const ListUsers = () => {
                       <thead>
                         <tr>
                           <th>User</th>
-                          <th>Name</th>
-                          <th className="text-center">Type</th>
-                          <th colSpan="2">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -253,7 +201,7 @@ const ListUsers = () => {
                         ) : (
                           currentUsers.map((user) => (
                             <tr key={user.id}>
-                              <td>
+                              <td onClick={() => (window.location.href = `/user/${user.id}`)}>
                                 <div className="d-flex px-2 py-1">
                                   <div>
                                   <img
@@ -270,32 +218,6 @@ const ListUsers = () => {
                                     </p>
                                   </div>
                                 </div>
-                              </td>
-                              <td>{user.nom}</td>
-                              <td className="align-middle text-center">{user.type}</td>
-                              <td>
-                                <button
-                                  className="btn btn-link text-secondary"
-                                  onClick={() =>
-                                    window.location.href = `/edit-user/${user.id}`
-                                  }
-                                >
-                                  Edit
-                                </button>
-                              </td>
-                              <td>
-                                <button
-                                  className="btn btn-link text-danger"
-                                  onClick={() => handleDelete(user.id)}
-                                >
-                                  Delete
-                                </button>
-                                <button
-                                  className="text-danger font-weight-bold text-xs btn btn-link"
-                                  onClick={() => (window.location.href = `/document/user/${user.id}`)}
-                                >
-                                  Document
-                                </button>
                               </td>
                             </tr>
                           ))
@@ -326,11 +248,10 @@ const ListUsers = () => {
               </div>
             </div>
           </div>
-          <Footer />
         </div>
       </main>
     </>
   );
 };
 
-export default ListUsers;
+export default ListUsersForClient;
